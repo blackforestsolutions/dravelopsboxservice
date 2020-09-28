@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.1.RELEASE</version>
+        <version>2.3.2.RELEASE</version>
     </parent>
 
     <properties>
@@ -19,9 +19,9 @@
         <apache.lang-version>2.6</apache.lang-version>
         <lombok.version>1.18.8</lombok.version>
         <jaxws.version>2.3.2</jaxws.version>
-        <blackforestsolutions.dravelopsdatamodel.version>0.1.0</blackforestsolutions.dravelopsdatamodel.version>
+        <blackforestsolutions.dravelopsdatamodel.version>polygon</blackforestsolutions.dravelopsdatamodel.version>
         <blackforestsolutions.dravelopsfrontenddatamodel.version>0.1.0</blackforestsolutions.dravelopsfrontenddatamodel.version>
-        <blackforestsolutions.dravelopsgeneratedcontent.version>0.1.0</blackforestsolutions.dravelopsgeneratedcontent.version>
+        <blackforestsolutions.dravelopsgeneratedcontent.version>0.2.0</blackforestsolutions.dravelopsgeneratedcontent.version>
         <!-- Maven test Dependencies -->
         <assertj.version>3.9.0</assertj.version>
         <junit.version>5.0.0</junit.version>
@@ -80,6 +80,10 @@
             <type>pom</type>
         </dependency>
         <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-geode</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.github.blackforestsolutions</groupId>
             <artifactId>dravelopsdatamodel</artifactId>
             <version>${blackforestsolutions.dravelopsdatamodel.version}</version>
@@ -103,8 +107,8 @@
             <!-- exclude junit 4 -->
             <exclusions>
                 <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
