@@ -35,17 +35,21 @@ public class OpenTripPlannerApiServiceImpl implements OpenTripPlannerApiService 
     }
 
     @Override
-    public Mono<Polygon> extractPolygon(ApiToken apiToken) {
-        String url = getPolygonRequestUrlWith(apiToken);
-        return callService.get(url, HttpHeaders.EMPTY)
-                .flatMap(response -> convertToPojo(response.getBody()))
-                .map(OpenTripPlannerPolygonResponse::getPolygon)
-                .flatMapMany(polygon -> Flux.fromIterable(polygon.getCoordinates()))
+    public Mono<Polygon> extractPolygonBy(ApiToken apiToken) {
+        try {
+            String url = getPolygonRequestUrlWith(apiToken);
+            return callService.get(url, HttpHeaders.EMPTY)
+                    .flatMap(response -> convertToPojo(response.getBody()))
+                    .map(OpenTripPlannerPolygonResponse::getPolygon)
+                    .flatMapMany(polygon -> Flux.fromIterable(polygon.getCoordinates()))
 //                .flatMap(this::checkIfPolygonHasError)
-                .map(coordinates -> coordinates.get(FIRST_INDEX))
-                .map(coordinate -> new Point(coordinate.get(FIRST_INDEX), coordinate.get(SECOND_INDEX)))
-                .collectList()
-                .map(Polygon::new);
+                    .flatMap(Flux::fromIterable)
+                    .map(coordinate -> new Point(coordinate.get(FIRST_INDEX), coordinate.get(SECOND_INDEX)))
+                    .collectList()
+                    .map(Polygon::new);
+        } catch (Exception e) {
+            return Mono.error(e);
+        }
     }
 
     private String getPolygonRequestUrlWith(ApiToken apiToken) {

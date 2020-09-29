@@ -5,5 +5,5 @@ import org.springframework.data.geo.Polygon;
 import reactor.core.publisher.Mono;
 
 public interface OpenTripPlannerApiService {
-    Mono<Polygon> extractPolygon(ApiToken apiToken);
+    Mono<Polygon> extractPolygonBy(ApiToken apiToken);
 }

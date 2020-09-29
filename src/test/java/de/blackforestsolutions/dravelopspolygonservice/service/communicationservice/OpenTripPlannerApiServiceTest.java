@@ -1,16 +1,11 @@
 package de.blackforestsolutions.dravelopspolygonservice.service.communicationservice;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import de.blackforestsolutions.dravelopsdatamodel.util.ApiToken;
-import de.blackforestsolutions.dravelopspolygonservice.objectmothers.ApiTokenObjectMother;
-import de.blackforestsolutions.dravelopspolygonservice.objectmothers.PolygonObjectMother;
 import de.blackforestsolutions.dravelopspolygonservice.service.communicationservice.restcalls.CallService;
 import de.blackforestsolutions.dravelopspolygonservice.service.supportservice.OpenTripPlannerHttpCallBuilderService;
-import de.blackforestsolutions.dravelopspolygonservice.testutils.TestUtils;
-import org.assertj.core.api.Assertions;
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.geo.Point;
 import org.springframework.data.geo.Polygon;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,7 +14,9 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static de.blackforestsolutions.dravelopspolygonservice.objectmothers.ApiTokenObjectMother.getOpenTripPlannerApiToken;
+import static de.blackforestsolutions.dravelopspolygonservice.objectmothers.PolygonObjectMother.getPolygon;
 import static de.blackforestsolutions.dravelopspolygonservice.testutils.TestUtils.getResourceFileAsString;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -43,31 +40,49 @@ class OpenTripPlannerApiServiceTest {
     }
 
     @Test
-    void test_() {
+    void test_extractPolygonBy_apiToken_returns_polygon_correctly() {
         ApiToken testData = getOpenTripPlannerApiToken();
-        Polygon expectedPolygon = PolygonObjectMother.getPolygon();
+        Polygon expectedPolygon = getPolygon();
 
-        Mono<Polygon> result = classUnderTest.extractPolygon(testData);
+        Mono<Polygon> result = classUnderTest.extractPolygonBy(testData);
 
         StepVerifier.create(result)
                 .assertNext(polygon -> {
-                    Assertions.assertThat(polygon.getPoints().size()).isEqualTo(12);
-                    Assertions.assertThat(polygon.getPoints()).containsExactly(
-                            new Point(6.651751d, 49.75588d),
-                            new Point(5.9561251d, 50.80702410000001d),
-                            new Point(5.886104100000001d, 50.979022900000004d),
-                            new Point(5.866844700000001d, 51.029371100000006d),
-                            new Point(5.863574300000001d, 51.045629100000006d),
-                            new Point(5.8629671000000005d, 51.0558945d),
-                            new Point(6.254944d, 51.833795d),
-                            new Point(7.43572d, 52.276498d),
-                            new Point(8.934161d, 52.290127d),
-                            new Point(8.661455d, 50.579053d),
-                            new Point(8.258708d, 50.001111d),
-                            new Point(8.016066d, 49.961436d),
-                            new Point(6.651751d, 49.75588d)
+                    assertThat(polygon.getPoints().size()).isEqualTo(5);
+                    assertThat(polygon.getPoints()).containsExactly(
+                            expectedPolygon.getPoints().get(0),
+                            expectedPolygon.getPoints().get(1),
+                            expectedPolygon.getPoints().get(2),
+                            expectedPolygon.getPoints().get(3),
+                            expectedPolygon.getPoints().get(4)
                     );
                 })
                 .verifyComplete();
     }
+
+    @Test
+    void test_extractPolygonBy_apiToken_with_error_returns_nullPointerException() {
+        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(getOpenTripPlannerApiToken());
+        testData.setHost(null);
+
+        Mono<Polygon> result = classUnderTest.extractPolygonBy(testData.build());
+
+        StepVerifier.create(result)
+                .expectError(NullPointerException.class)
+                .verify();
+    }
+
+    @Test
+    void test_extractPolygonBy_apiToken_and_bad_http_request_returns_jsonParseException() {
+        ApiToken testData =  getOpenTripPlannerApiToken();
+        when(callService.get(anyString(), any(HttpHeaders.class)))
+                .thenReturn(Mono.just(new ResponseEntity<>("error", HttpStatus.BAD_REQUEST)));
+
+        Mono<Polygon> result = classUnderTest.extractPolygonBy(testData);
+
+        StepVerifier.create(result)
+                .expectError(JsonParseException.class)
+                .verify();
+    }
+
 }

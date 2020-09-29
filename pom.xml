@@ -19,7 +19,7 @@
         <apache.lang-version>2.6</apache.lang-version>
         <lombok.version>1.18.8</lombok.version>
         <jaxws.version>2.3.2</jaxws.version>
-        <blackforestsolutions.dravelopsdatamodel.version>polygon</blackforestsolutions.dravelopsdatamodel.version>
+        <blackforestsolutions.dravelopsdatamodel.version>polygon-1</blackforestsolutions.dravelopsdatamodel.version>
         <blackforestsolutions.dravelopsfrontenddatamodel.version>0.1.0</blackforestsolutions.dravelopsfrontenddatamodel.version>
         <blackforestsolutions.dravelopsgeneratedcontent.version>0.2.0</blackforestsolutions.dravelopsgeneratedcontent.version>
         <!-- Maven test Dependencies -->
@@ -27,6 +27,7 @@
         <junit.version>5.0.0</junit.version>
         <mockito.version>3.2.0</mockito.version>
         <selenium.version>1.0.1</selenium.version>
+        <awaitility.version>3.1.6</awaitility.version>
         <!-- Maven build plugins -->
         <maven.dockerfile.plugin.version>1.3.7</maven.dockerfile.plugin.version>
         <maven.jacoco.plugin.version>0.8.4</maven.jacoco.plugin.version>
@@ -83,11 +84,11 @@
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-geode</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.github.blackforestsolutions</groupId>
-            <artifactId>dravelopsdatamodel</artifactId>
-            <version>${blackforestsolutions.dravelopsdatamodel.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.github.blackforestsolutions</groupId>-->
+<!--            <artifactId>dravelopsdatamodel</artifactId>-->
+<!--            <version>${blackforestsolutions.dravelopsdatamodel.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.github.blackforestsolutions</groupId>
             <artifactId>dravelopsdatamodel</artifactId>
@@ -144,6 +145,12 @@
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

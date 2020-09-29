@@ -40,7 +40,7 @@ class OpenTripPlannerCallServiceIT {
                 .assertNext(response -> {
                     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
                     assertThat(response.getBody()).isNotEmpty();
-                    assertThat(retrieveJsonToPojo(response.getBody(), OpenTripPlannerPolygonResponse.class));
+                    assertThat(retrieveJsonToPojo(response.getBody(), OpenTripPlannerPolygonResponse.class).getPolygon().getCoordinates().get(0).size()).isGreaterThan(4);
                 })
                 .verifyComplete();
     }
