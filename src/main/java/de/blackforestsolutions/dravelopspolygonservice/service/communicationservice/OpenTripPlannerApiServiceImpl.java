@@ -42,7 +42,6 @@ public class OpenTripPlannerApiServiceImpl implements OpenTripPlannerApiService 
                     .flatMap(response -> convertToPojo(response.getBody()))
                     .map(OpenTripPlannerPolygonResponse::getPolygon)
                     .flatMapMany(polygon -> Flux.fromIterable(polygon.getCoordinates()))
-//                .flatMap(this::checkIfPolygonHasError)
                     .flatMap(Flux::fromIterable)
                     .map(coordinate -> new Point(coordinate.get(FIRST_INDEX), coordinate.get(SECOND_INDEX)))
                     .collectList()
@@ -63,17 +62,5 @@ public class OpenTripPlannerApiServiceImpl implements OpenTripPlannerApiService 
         DravelOpsJsonMapper mapper = new DravelOpsJsonMapper();
         return mapper.mapJsonToPojo(json, OpenTripPlannerPolygonResponse.class);
     }
-
-//    private Mono<List<List<Double>>> checkIfPolygonHasError(List<List<Double>> polygon) {
-//        Optional<List<Double>> mistake = polygon
-//                .stream()
-//                .filter(coordinate -> coordinate.get(0).isNaN() && coordinate.get(1).isNaN())
-//                .findAny();
-//        if (mistake.isPresent()) {
-//            return Mono.error(new Exception(mistake.toString()));
-//        }
-//        return Mono.just(polygon);
-//    }
-
 
 }
