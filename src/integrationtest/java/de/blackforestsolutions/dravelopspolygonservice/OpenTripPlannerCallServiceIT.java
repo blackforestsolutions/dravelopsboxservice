@@ -1,7 +1,6 @@
 package de.blackforestsolutions.dravelopspolygonservice;
 
 import de.blackforestsolutions.dravelopsdatamodel.util.ApiToken;
-import de.blackforestsolutions.dravelopsdatamodel.util.DravelOpsHttpCallBuilder;
 import de.blackforestsolutions.dravelopsgeneratedcontent.opentripplanner.polygon.OpenTripPlannerPolygonResponse;
 import de.blackforestsolutions.dravelopspolygonservice.service.communicationservice.restcalls.CallService;
 import de.blackforestsolutions.dravelopspolygonservice.service.supportservice.OpenTripPlannerHttpCallBuilderService;
@@ -14,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import static de.blackforestsolutions.dravelopsdatamodel.util.DravelOpsHttpCallBuilder.buildUrlWith;
 import static de.blackforestsolutions.dravelopspolygonservice.testutils.TestUtils.retrieveJsonToPojo;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -34,7 +34,7 @@ class OpenTripPlannerCallServiceIT {
         ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(openTripPlannerApiToken);
         testData.setPath(httpCallBuilderService.buildOpenTripPlannerPolygonPathWith(testData.build()));
 
-        Mono<ResponseEntity<String>> result = callService.get(DravelOpsHttpCallBuilder.buildUrlWith(testData.build()).toString(), HttpHeaders.EMPTY);
+        Mono<ResponseEntity<String>> result = callService.get(buildUrlWith(testData.build()).toString(), HttpHeaders.EMPTY);
 
         StepVerifier.create(result)
                 .assertNext(response -> {
