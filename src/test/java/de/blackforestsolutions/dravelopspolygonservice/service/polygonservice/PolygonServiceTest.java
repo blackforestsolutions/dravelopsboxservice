@@ -11,10 +11,11 @@ import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.test.util.ReflectionTestUtils;
 import reactor.core.publisher.Mono;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Locale;
 
 import static de.blackforestsolutions.dravelopspolygonservice.objectmothers.ApiTokenObjectMother.getOpenTripPlannerApiToken;
 import static de.blackforestsolutions.dravelopspolygonservice.objectmothers.PolygonObjectMother.getPolygon;
@@ -34,8 +35,10 @@ class PolygonServiceTest {
 
 
     @Test
-    void test_cron_from_properties_is_executed_next_time_correctly_relative_to_last_time() {
-        Date lastExecutionTestDate = Date.from(LocalDateTime.parse("2020-08-30T00:00:00").toInstant(ZoneOffset.UTC));
+    void test_cron_from_properties_is_executed_next_time_correctly_relative_to_last_time() throws ParseException {
+        // Locale.US as github workflow is apparently not executed in germany
+        SimpleDateFormat formatter = new SimpleDateFormat("EE MMM dd HH:mm:ss zzzz yyyy", Locale.US);
+        Date lastExecutionTestDate = formatter.parse("Mon Aug 30 00:00:00 CEST 2020");
 
         String cron = getPropertyFromFileAsString("application-bw-dev.properties", "otp.polygonupdatetime");
         CronTrigger cronUnderTest = new CronTrigger(cron);
