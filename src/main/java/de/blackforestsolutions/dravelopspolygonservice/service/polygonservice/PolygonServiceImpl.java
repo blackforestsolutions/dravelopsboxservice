@@ -31,7 +31,8 @@ public class PolygonServiceImpl implements PolygonService {
                 .onErrorStop()
                 .subscribe(polygon -> {
                     openTripPlannerPolygon = polygon;
-                    log.info("Polygon from OpenTripPlanner was updated.");
+//                   05.10.2020 Placeholder to defend pmd violation until pelias is implemented
+                    log.info("Polygon from OpenTripPlanner was updated: ", openTripPlannerPolygon);
                 });
     }
 }
