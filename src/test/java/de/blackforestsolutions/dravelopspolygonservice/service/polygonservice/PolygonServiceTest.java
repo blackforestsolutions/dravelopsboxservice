@@ -2,9 +2,13 @@ package de.blackforestsolutions.dravelopspolygonservice.service.polygonservice;
 
 import de.blackforestsolutions.dravelopsdatamodel.util.ApiToken;
 import de.blackforestsolutions.dravelopspolygonservice.service.communicationservice.OpenTripPlannerApiService;
+import org.assertj.core.api.Condition;
 import org.awaitility.Awaitility;
 import org.awaitility.Duration;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.springframework.data.geo.Polygon;
 import org.springframework.scheduling.TriggerContext;
 import org.springframework.scheduling.support.CronTrigger;
@@ -35,12 +39,13 @@ class PolygonServiceTest {
 
 
     @Test
+    @DisabledOnOs(OS.LINUX)
     void test_cron_from_properties_is_executed_next_time_correctly_relative_to_last_time() throws ParseException {
         // Locale.US as github workflow is apparently not executed in germany
         SimpleDateFormat formatter = new SimpleDateFormat("EE MMM dd HH:mm:ss zzzz yyyy", Locale.US);
         Date lastExecutionTestDate = formatter.parse("Mon Aug 30 00:00:00 CEST 2020");
-
         String cron = getPropertyFromFileAsString("application-bw-dev.properties", "otp.polygonupdatetime");
+
         CronTrigger cronUnderTest = new CronTrigger(cron);
         Date result = cronUnderTest.nextExecutionTime(new TriggerContext() {
             @Override
