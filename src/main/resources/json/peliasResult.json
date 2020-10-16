@@ -296,6 +296,46 @@
           }
         }
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.674534,
+          48.128923
+        ]
+      },
+      "properties": {
+        "id": "way/543351086",
+        "gid": "openstreetmap:address:way/543351086",
+        "layer": "address",
+        "source": "openstreetmap",
+        "source_id": "way/543351086",
+        "name": "Stuttgarter Straße 1",
+        "housenumber": "1",
+        "street": "Stuttgarter Straße",
+        "postalcode": "78628",
+        "confidence": 1,
+        "distance": 0,
+        "accuracy": "point",
+        "country": "Deutschland",
+        "country_gid": "whosonfirst:country:85633111",
+        "country_a": "DEU",
+        "region": "Baden-Württemberg",
+        "region_gid": "whosonfirst:region:85682567",
+        "region_a": "BW",
+        "macrocounty": "Regierungsbezirk Freiburg",
+        "macrocounty_gid": "whosonfirst:macrocounty:404227543",
+        "county": "Rottweil",
+        "county_gid": "whosonfirst:county:102063277",
+        "county_a": "RT",
+        "localadmin": "Rottweil",
+        "localadmin_gid": "whosonfirst:localadmin:1377689471",
+        "locality": "Rottweil",
+        "locality_gid": "whosonfirst:locality:101826687",
+        "label": "Stuttgarter Straße 1, Rottweil, Deutschland"
+      }
     }
   ],
   "bbox": [
