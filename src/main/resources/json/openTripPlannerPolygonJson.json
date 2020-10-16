@@ -1,0 +1,89 @@
+{
+  "routerId": "vrs",
+  "polygon": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          5.886104100000001,
+          50.979022900000004
+        ],
+        [
+          8.661455,
+          50.579053
+        ],
+        [
+          8.258708,
+          50.001111
+        ],
+        [
+          8.016066,
+          49.961436
+        ],
+        [
+          6.651751,
+          49.75588
+        ]
+      ]
+    ]
+  },
+  "buildTime": 1601032925484,
+  "transitServiceStarts": 1597183200,
+  "transitServiceEnds": 1607814000,
+  "transitModes": [
+    "BUS",
+    "RAIL",
+    "TRAM"
+  ],
+  "centerLatitude": 50.8808095,
+  "centerLongitude": 7.072457,
+  "hasParkRide": true,
+  "travelOptions": [
+    {
+      "value": "TRANSIT,WALK",
+      "name": "TRANSIT"
+    },
+    {
+      "value": "BUS,WALK",
+      "name": "BUS"
+    },
+    {
+      "value": "RAIL,WALK",
+      "name": "RAIL"
+    },
+    {
+      "value": "TRAM,WALK",
+      "name": "TRAM"
+    },
+    {
+      "value": "WALK",
+      "name": "WALK"
+    },
+    {
+      "value": "BICYCLE",
+      "name": "BICYCLE"
+    },
+    {
+      "value": "CAR",
+      "name": "CAR"
+    },
+    {
+      "value": "TRANSIT,BICYCLE",
+      "name": "TRANSIT_BICYCLE"
+    },
+    {
+      "value": "CAR_PARK,WALK,TRANSIT",
+      "name": "PARKRIDE"
+    },
+    {
+      "value": "CAR,WALK,TRANSIT",
+      "name": "KISSRIDE"
+    }
+  ],
+  "lowerLeftLatitude": 49.75588,
+  "lowerLeftLongitude": 5.8629671000000005,
+  "upperRightLongitude": 8.934161,
+  "upperRightLatitude": 52.290127,
+  "hasBikePark": false,
+  "hasBikeSharing": false
+}
