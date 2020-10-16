@@ -13,6 +13,10 @@
         "admin": "Rottweil, De",
         "country": "De"
       },
+      "point.lat": 48.128923,
+      "point.lon": 8.674534,
+      "boundary.circle.lat": 48.128923,
+      "boundary.circle.lon": 8.674534,
       "size": 1,
       "layers": [
         "venue",
