@@ -1,0 +1,303 @@
+{
+  "geocoding": {
+    "version": "0.2",
+    "attribution": "http://localhost:4000/attribution",
+    "query": {
+      "text": "Stuttgarter Strasse 1, Rottweil, De",
+      "parser": "pelias",
+      "parsed_text": {
+        "subject": "1 Stuttgarter Strasse",
+        "street": "Stuttgarter Strasse",
+        "housenumber": "1",
+        "locality": "Rottweil",
+        "admin": "Rottweil, De",
+        "country": "De"
+      },
+      "size": 1,
+      "layers": [
+        "venue",
+        "street",
+        "country",
+        "macroregion",
+        "region",
+        "county",
+        "localadmin",
+        "locality",
+        "borough",
+        "neighbourhood",
+        "continent",
+        "empire",
+        "dependency",
+        "macrocounty",
+        "macrohood",
+        "microhood",
+        "disputed",
+        "postalcode",
+        "ocean",
+        "marinearea"
+      ],
+      "private": false,
+      "focus.point.lat": 48.049034,
+      "focus.point.lon": 8.195593,
+      "lang": {
+        "name": "German",
+        "iso6391": "de",
+        "iso6393": "deu",
+        "via": "querystring",
+        "defaulted": false
+      },
+      "querySize": 20
+    },
+    "warnings": [
+      "performance optimization: excluding 'address' layer"
+    ],
+    "engine": {
+      "name": "Pelias",
+      "author": "Mapzen",
+      "version": "1.0"
+    },
+    "timestamp": 1602827223180
+  },
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.674534,
+          48.128923
+        ]
+      },
+      "properties": {
+        "id": "way/543351086",
+        "gid": "openstreetmap:address:way/543351086",
+        "layer": "address",
+        "source": "openstreetmap",
+        "source_id": "way/543351086",
+        "name": "Stuttgarter Straße 1",
+        "housenumber": "1",
+        "street": "Stuttgarter Straße",
+        "postalcode": "78628",
+        "distance": 36.707,
+        "accuracy": "point",
+        "country": "Deutschland",
+        "country_gid": "whosonfirst:country:85633111",
+        "country_a": "DEU",
+        "region": "Baden-Württemberg",
+        "region_gid": "whosonfirst:region:85682567",
+        "region_a": "BW",
+        "macrocounty": "Regierungsbezirk Freiburg",
+        "macrocounty_gid": "whosonfirst:macrocounty:404227543",
+        "county": "Rottweil",
+        "county_gid": "whosonfirst:county:102063277",
+        "county_a": "RT",
+        "localadmin": "Rottweil",
+        "localadmin_gid": "whosonfirst:localadmin:1377689471",
+        "locality": "Rottweil",
+        "locality_gid": "whosonfirst:locality:101826687",
+        "label": "Stuttgarter Straße 1, Rottweil, Deutschland"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.687096,
+          50.970097
+        ]
+      },
+      "properties": {
+        "id": "85633111",
+        "gid": "whosonfirst:country:85633111",
+        "layer": "country",
+        "source": "whosonfirst",
+        "source_id": "85633111",
+        "name": "Deutschland",
+        "distance": 342.558,
+        "accuracy": "centroid",
+        "country": "Deutschland",
+        "country_gid": "whosonfirst:country:85633111",
+        "country_a": "DEU",
+        "label": "Deutschland"
+      },
+      "bbox": [
+        5.86625,
+        47.270124,
+        15.041816,
+        55.058384
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.7748,
+          54.264295
+        ]
+      },
+      "properties": {
+        "id": "102064145",
+        "gid": "whosonfirst:county:102064145",
+        "layer": "county",
+        "source": "whosonfirst",
+        "source_id": "102064145",
+        "name": "Kreis Rendsburg-Eckernförde",
+        "distance": 700.562,
+        "accuracy": "centroid",
+        "country": "Deutschland",
+        "country_gid": "whosonfirst:country:85633111",
+        "country_a": "DEU",
+        "region": "Schleswig-Holstein",
+        "region_gid": "whosonfirst:region:85682517",
+        "region_a": "SH",
+        "county": "Kreis Rendsburg-Eckernförde",
+        "county_gid": "whosonfirst:county:102064145",
+        "label": "Kreis Rendsburg-Eckernförde, Deutschland"
+      },
+      "bbox": [
+        9.304694,
+        54.008885,
+        10.199383,
+        54.647008
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.195593,
+          48.049034
+        ]
+      },
+      "properties": {
+        "id": "101764131",
+        "gid": "whosonfirst:locality:101764131",
+        "layer": "locality",
+        "source": "whosonfirst",
+        "source_id": "101764131",
+        "name": "Furtwangen im Schwarzwald",
+        "distance": 0,
+        "accuracy": "centroid",
+        "country": "Deutschland",
+        "country_gid": "whosonfirst:country:85633111",
+        "country_a": "DEU",
+        "region": "Baden-Württemberg",
+        "region_gid": "whosonfirst:region:85682567",
+        "region_a": "BW",
+        "macrocounty": "Regierungsbezirk Freiburg",
+        "macrocounty_gid": "whosonfirst:macrocounty:404227543",
+        "county": "Schwarzwald-Baar-Kreis",
+        "county_gid": "whosonfirst:county:102063253",
+        "localadmin": "Furtwangen im Schwarzwald",
+        "localadmin_gid": "whosonfirst:localadmin:1377689569",
+        "locality": "Furtwangen im Schwarzwald",
+        "locality_gid": "whosonfirst:locality:101764131",
+        "label": "Furtwangen im Schwarzwald, Deutschland"
+      },
+      "bbox": [
+        8.13076932618,
+        47.9920992252,
+        8.28238436825,
+        48.1041510227
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.209198,
+          48.048381
+        ]
+      },
+      "properties": {
+        "id": "polyline:1834",
+        "gid": "openstreetmap:street:polyline:1834",
+        "layer": "street",
+        "source": "openstreetmap",
+        "source_id": "polyline:1834",
+        "name": "Am Großhausberg",
+        "street": "Am Großhausberg",
+        "distance": 1.015,
+        "accuracy": "centroid",
+        "country": "Deutschland",
+        "country_gid": "whosonfirst:country:85633111",
+        "country_a": "DEU",
+        "region": "Baden-Württemberg",
+        "region_gid": "whosonfirst:region:85682567",
+        "region_a": "BW",
+        "macrocounty": "Regierungsbezirk Freiburg",
+        "macrocounty_gid": "whosonfirst:macrocounty:404227543",
+        "county": "Schwarzwald-Baar-Kreis",
+        "county_gid": "whosonfirst:county:102063253",
+        "county_a": "SB",
+        "localadmin": "Furtwangen im Schwarzwald",
+        "localadmin_gid": "whosonfirst:localadmin:1377689569",
+        "locality": "Furtwangen im Schwarzwald",
+        "locality_gid": "whosonfirst:locality:101764131",
+        "label": "Am Großhausberg, Furtwangen im Schwarzwald, Deutschland"
+      },
+      "bbox": [
+        8.208427,
+        48.048347,
+        8.209969,
+        48.048382
+      ]
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.207673,
+          48.051086
+        ]
+      },
+      "properties": {
+        "id": "node/1365167142",
+        "gid": "openstreetmap:venue:node/1365167142",
+        "layer": "venue",
+        "source": "openstreetmap",
+        "source_id": "node/1365167142",
+        "name": "Deutsches Uhrenmuseum Furtwangen",
+        "housenumber": "1",
+        "street": "Robert-Gerwig-Platz",
+        "postalcode": "78120",
+        "distance": 0.928,
+        "accuracy": "point",
+        "country": "Deutschland",
+        "country_gid": "whosonfirst:country:85633111",
+        "country_a": "DEU",
+        "region": "Baden-Württemberg",
+        "region_gid": "whosonfirst:region:85682567",
+        "region_a": "BW",
+        "macrocounty": "Regierungsbezirk Freiburg",
+        "macrocounty_gid": "whosonfirst:macrocounty:404227543",
+        "county": "Schwarzwald-Baar-Kreis",
+        "county_gid": "whosonfirst:county:102063253",
+        "county_a": "SB",
+        "localadmin": "Furtwangen im Schwarzwald",
+        "localadmin_gid": "whosonfirst:localadmin:1377689569",
+        "locality": "Furtwangen im Schwarzwald",
+        "locality_gid": "whosonfirst:locality:101764131",
+        "label": "Deutsches Uhrenmuseum Furtwangen, Furtwangen im Schwarzwald, Deutschland",
+        "addendum": {
+          "osm": {
+            "wheelchair": "yes",
+            "opening_hours": "Apr-Oct: Mo-Su,PH 09:00-18:00;Nov-Mar: Mo-Su,PH 10:00-17:00"
+          }
+        }
+      }
+    }
+  ],
+  "bbox": [
+    8.674534,
+    48.128923,
+    8.674534,
+    48.128923
+  ]
+}

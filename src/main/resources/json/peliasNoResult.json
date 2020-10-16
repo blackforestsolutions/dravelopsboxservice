@@ -1,0 +1,60 @@
+{
+  "geocoding": {
+    "version": "0.2",
+    "attribution": "http://localhost:4000/attribution",
+    "query": {
+      "text": "Am Großhausberg, Furtwangen im Schwarzwald, Deut",
+      "parser": "pelias",
+      "parsed_text": {
+        "subject": "Am Großhausberg",
+        "locality": "Furtwangen im Schwarzwald",
+        "admin": "Furtwangen im Schwarzwald, Deut"
+      },
+      "size": 10,
+      "layers": [
+        "venue",
+        "street",
+        "country",
+        "macroregion",
+        "region",
+        "county",
+        "localadmin",
+        "locality",
+        "borough",
+        "neighbourhood",
+        "continent",
+        "empire",
+        "dependency",
+        "macrocounty",
+        "macrohood",
+        "microhood",
+        "disputed",
+        "postalcode",
+        "ocean",
+        "marinearea"
+      ],
+      "private": false,
+      "focus.point.lat": 48.049034,
+      "focus.point.lon": 8.195593,
+      "lang": {
+        "name": "German",
+        "iso6391": "de",
+        "iso6393": "deu",
+        "via": "querystring",
+        "defaulted": false
+      },
+      "querySize": 20
+    },
+    "warnings": [
+      "performance optimization: excluding 'address' layer"
+    ],
+    "engine": {
+      "name": "Pelias",
+      "author": "Mapzen",
+      "version": "1.0"
+    },
+    "timestamp": 1602824108595
+  },
+  "type": "FeatureCollection",
+  "features": []
+}
