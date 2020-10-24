@@ -6,9 +6,6 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.geo.Box;
 import org.springframework.data.geo.Point;
-import org.springframework.data.geo.Polygon;
-
-import java.util.Collections;
 
 @SpringBootConfiguration
 public class OpenTripPlannerConfiguration {
