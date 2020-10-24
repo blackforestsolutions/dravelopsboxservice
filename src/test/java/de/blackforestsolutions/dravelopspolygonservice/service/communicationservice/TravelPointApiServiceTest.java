@@ -1,15 +1,12 @@
-package de.blackforestsolutions.dravelopspolygonservice.service.polygonservice;
+package de.blackforestsolutions.dravelopspolygonservice.service.communicationservice;
 
 import de.blackforestsolutions.dravelopsdatamodel.util.ApiToken;
-import de.blackforestsolutions.dravelopspolygonservice.service.communicationservice.OpenTripPlannerApiService;
-import org.assertj.core.api.Condition;
 import org.awaitility.Awaitility;
 import org.awaitility.Duration;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-import org.springframework.data.geo.Polygon;
+import org.springframework.data.geo.Box;
 import org.springframework.scheduling.TriggerContext;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -17,25 +14,25 @@ import reactor.core.publisher.Mono;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 
-import static de.blackforestsolutions.dravelopspolygonservice.objectmothers.ApiTokenObjectMother.getOpenTripPlannerApiToken;
-import static de.blackforestsolutions.dravelopspolygonservice.objectmothers.PolygonObjectMother.getPolygon;
-import static de.blackforestsolutions.dravelopspolygonservice.testutils.TestUtils.getPropertyFromFileAsString;
+import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.ApiTokenObjectMother.getOpenTripPlannerApiToken;
+import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.BoxObjectMother.getBox;
+import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.BoxObjectMother.getVrsBox;
+import static de.blackforestsolutions.dravelopsdatamodel.testutil.TestUtils.getPropertyFromFileAsString;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class PolygonServiceTest {
+class TravelPointApiServiceTest {
 
-    private final Polygon openTripPlannerPolygon = new Polygon(Collections.emptyList());
+    private final Box openTripPlannerBox = getBox();
     private final ApiToken openTripPlannerApiToken = getOpenTripPlannerApiToken();
     private final OpenTripPlannerApiService openTripPlannerApiService = mock(OpenTripPlannerApiService.class);
 
-    private final PolygonService classUnderTest = new PolygonServiceImpl(openTripPlannerPolygon, openTripPlannerApiToken, openTripPlannerApiService);
+    private final TravelPointApiService classUnderTest = new TravelPointApiServiceImpl(openTripPlannerBox, openTripPlannerApiToken, openTripPlannerApiService);
 
 
     @Test
@@ -68,39 +65,32 @@ class PolygonServiceTest {
     }
 
     @Test
-    void test_updateOpenTripPlannerPolygon_updates_polygon_within_service() {
-        when(openTripPlannerApiService.extractPolygonBy(any(ApiToken.class)))
-                .thenReturn(Mono.just(getPolygon()));
+    void test_updateOpenTripPlannerBox_updates_polygon_within_service() {
+        when(openTripPlannerApiService.extractBoxBy(any(ApiToken.class)))
+                .thenReturn(Mono.just(getVrsBox()));
 
-        classUnderTest.updateOpenTripPlannerPolygon();
+        classUnderTest.updateOpenTripPlannerBox();
 
         Awaitility.await()
                 .atMost(Duration.ONE_SECOND)
                 .untilAsserted(() -> {
-                    Polygon openTripPlannerPolygon = (Polygon) ReflectionTestUtils.getField(classUnderTest, "openTripPlannerPolygon");
-                    assertThat(openTripPlannerPolygon.getPoints().size()).isEqualTo(5);
-                    assertThat(openTripPlannerPolygon.getPoints()).containsExactly(
-                            getPolygon().getPoints().get(0),
-                            getPolygon().getPoints().get(1),
-                            getPolygon().getPoints().get(2),
-                            getPolygon().getPoints().get(3),
-                            getPolygon().getPoints().get(4)
-                    );
+                    Box openTripPlannerBox = (Box) ReflectionTestUtils.getField(classUnderTest, "openTripPlannerBox");
+                    assertThat(openTripPlannerBox).isEqualTo(getVrsBox());
                 });
     }
 
     @Test
-    void test_updateOpenTripPlannerPolygon_updates_not_polygon_when_error_is_thrown() {
-        when(openTripPlannerApiService.extractPolygonBy(any(ApiToken.class)))
+    void test_updateOpenTripPlannerBox_updates_not_polygon_when_error_is_thrown() {
+        when(openTripPlannerApiService.extractBoxBy(any(ApiToken.class)))
                 .thenReturn(Mono.error(new NullPointerException()));
 
-        classUnderTest.updateOpenTripPlannerPolygon();
+        classUnderTest.updateOpenTripPlannerBox();
 
         Awaitility.await()
                 .atMost(Duration.ONE_SECOND)
                 .untilAsserted(() -> {
-                    Polygon openTripPlannerPolygon = (Polygon) ReflectionTestUtils.getField(classUnderTest, "openTripPlannerPolygon");
-                    assertThat(openTripPlannerPolygon.getPoints().size()).isEqualTo(0);
+                    Box openTripPlannerBox = (Box) ReflectionTestUtils.getField(classUnderTest, "openTripPlannerBox");
+                    assertThat(openTripPlannerBox).isEqualTo(getBox());
                 });
     }
 

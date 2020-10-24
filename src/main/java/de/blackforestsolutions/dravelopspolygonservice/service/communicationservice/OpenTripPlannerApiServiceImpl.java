@@ -7,11 +7,10 @@ import de.blackforestsolutions.dravelopspolygonservice.service.communicationserv
 import de.blackforestsolutions.dravelopspolygonservice.service.supportservice.OpenTripPlannerHttpCallBuilderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.geo.Box;
 import org.springframework.data.geo.Point;
-import org.springframework.data.geo.Polygon;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.net.URL;
@@ -21,9 +20,6 @@ import static de.blackforestsolutions.dravelopsdatamodel.util.DravelOpsHttpCallB
 @Slf4j
 @Service
 public class OpenTripPlannerApiServiceImpl implements OpenTripPlannerApiService {
-
-    private static final int FIRST_INDEX = 0;
-    private static final int SECOND_INDEX = 1;
 
     private final CallService callService;
     private final OpenTripPlannerHttpCallBuilderService openTripPlannerHttpCallBuilderService;
@@ -35,20 +31,21 @@ public class OpenTripPlannerApiServiceImpl implements OpenTripPlannerApiService 
     }
 
     @Override
-    public Mono<Polygon> extractPolygonBy(ApiToken apiToken) {
+    public Mono<Box> extractBoxBy(ApiToken apiToken) {
         try {
             String url = getPolygonRequestUrlWith(apiToken);
             return callService.get(url, HttpHeaders.EMPTY)
                     .flatMap(response -> convertToPojo(response.getBody()))
-                    .map(OpenTripPlannerPolygonResponse::getPolygon)
-                    .flatMapMany(polygon -> Flux.fromIterable(polygon.getCoordinates()))
-                    .flatMap(Flux::fromIterable)
-                    .map(coordinate -> new Point(coordinate.get(FIRST_INDEX), coordinate.get(SECOND_INDEX)))
-                    .collectList()
-                    .map(Polygon::new);
+                    .map(responseBody -> extractBoxFrom(responseBody.getLowerLeftLatitude(), responseBody.getLowerLeftLongitude(), responseBody.getUpperRightLatitude(), responseBody.getUpperRightLongitude()));
         } catch (Exception e) {
             return Mono.error(e);
         }
+    }
+
+    private Box extractBoxFrom(double lowerLeftLatitude, double lowerLeftLongitude, double upperRightLatitude, double upperRightLongitude) {
+        Point lowerLeft = new Point(lowerLeftLongitude, lowerLeftLatitude);
+        Point upperRight = new Point(upperRightLongitude, upperRightLatitude);
+        return new Box(lowerLeft, upperRight);
     }
 
     private String getPolygonRequestUrlWith(ApiToken apiToken) {

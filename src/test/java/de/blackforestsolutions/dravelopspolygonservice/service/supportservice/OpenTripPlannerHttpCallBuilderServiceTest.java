@@ -3,7 +3,7 @@ package de.blackforestsolutions.dravelopspolygonservice.service.supportservice;
 import de.blackforestsolutions.dravelopsdatamodel.util.ApiToken;
 import org.junit.jupiter.api.Test;
 
-import static de.blackforestsolutions.dravelopspolygonservice.objectmothers.ApiTokenObjectMother.getOpenTripPlannerApiToken;
+import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.ApiTokenObjectMother.getOpenTripPlannerApiToken;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

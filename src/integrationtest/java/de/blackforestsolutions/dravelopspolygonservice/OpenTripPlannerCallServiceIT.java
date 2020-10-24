@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static de.blackforestsolutions.dravelopsdatamodel.util.DravelOpsHttpCallBuilder.buildUrlWith;
-import static de.blackforestsolutions.dravelopspolygonservice.testutils.TestUtils.retrieveJsonToPojo;
+import static de.blackforestsolutions.dravelopsdatamodel.testutil.TestUtils.retrieveJsonToPojo;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -30,7 +30,7 @@ class OpenTripPlannerCallServiceIT {
     private ApiToken openTripPlannerApiToken;
 
     @Test
-    void test_polygon() {
+    void test_box() {
         ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(openTripPlannerApiToken);
         testData.setPath(httpCallBuilderService.buildOpenTripPlannerPolygonPathWith(testData.build()));
 
