@@ -1,4 +1,4 @@
-package de.blackforestsolutions.dravelopspolygonservice.service.supportservice;
+package de.blackforestsolutions.dravelopspolygonservice.service.callbuilderservice;
 
 import de.blackforestsolutions.dravelopsdatamodel.util.ApiToken;
 import org.springframework.stereotype.Service;

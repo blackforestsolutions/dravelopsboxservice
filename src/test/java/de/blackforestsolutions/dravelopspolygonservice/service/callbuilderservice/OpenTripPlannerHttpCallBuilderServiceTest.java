@@ -1,6 +1,8 @@
-package de.blackforestsolutions.dravelopspolygonservice.service.supportservice;
+package de.blackforestsolutions.dravelopspolygonservice.service.callbuilderservice;
 
 import de.blackforestsolutions.dravelopsdatamodel.util.ApiToken;
+import de.blackforestsolutions.dravelopspolygonservice.service.callbuilderservice.OpenTripPlannerHttpCallBuilderService;
+import de.blackforestsolutions.dravelopspolygonservice.service.callbuilderservice.OpenTripPlannerHttpCallBuilderServiceImpl;
 import org.junit.jupiter.api.Test;
 
 import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.ApiTokenObjectMother.getOpenTripPlannerApiToken;
