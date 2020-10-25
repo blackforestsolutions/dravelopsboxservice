@@ -7,6 +7,8 @@ import org.springframework.data.geo.Box;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+
+// TODO: 25.10.20  
 @Slf4j
 @Service
 public class TravelPointApiServiceImpl implements TravelPointApiService {
