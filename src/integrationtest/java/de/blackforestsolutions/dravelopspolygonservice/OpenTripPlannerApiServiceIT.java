@@ -5,7 +5,7 @@ import de.blackforestsolutions.dravelopspolygonservice.service.communicationserv
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.geo.Polygon;
+import org.springframework.data.geo.Box;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -21,12 +21,15 @@ class OpenTripPlannerApiServiceIT {
     private ApiToken openTripPlannerApiToken;
 
     @Test
-    void test_extractPolygonBy_returns_polygon() {
+    void test_extractBoxBy_returns_polygon() {
 
-        Mono<Polygon> result = classUnderTest.extractPolygonBy(openTripPlannerApiToken);
+        Mono<Box> result = classUnderTest.extractBoxBy(openTripPlannerApiToken);
 
         StepVerifier.create(result)
-                .assertNext(polygon -> assertThat(polygon.getPoints().size()).isGreaterThan(1))
+                .assertNext(box -> {
+                    assertThat(box.getFirst()).isNotNull();
+                    assertThat(box.getSecond()).isNotNull();
+                })
                 .verifyComplete();
     }
 

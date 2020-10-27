@@ -1,9 +1,9 @@
 package de.blackforestsolutions.dravelopspolygonservice.service.communicationservice;
 
 import de.blackforestsolutions.dravelopsdatamodel.util.ApiToken;
-import org.springframework.data.geo.Polygon;
+import org.springframework.data.geo.Box;
 import reactor.core.publisher.Mono;
 
 public interface OpenTripPlannerApiService {
-    Mono<Polygon> extractPolygonBy(ApiToken apiToken);
+    Mono<Box> extractBoxBy(ApiToken apiToken);
 }
