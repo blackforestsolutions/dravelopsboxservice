@@ -1,6 +1,6 @@
 package de.blackforestsolutions.dravelopspolygonservice.service.applicationstart;
 
-import de.blackforestsolutions.dravelopspolygonservice.service.communicationservice.TravelPointApiService;
+import de.blackforestsolutions.dravelopspolygonservice.service.supportservice.RequestTokenHandlerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
@@ -9,15 +9,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class ApplicationStartComponent implements ApplicationListener<ApplicationReadyEvent> {
 
-    private final TravelPointApiService travelPointApiService;
+    private final RequestTokenHandlerService requestTokenHandlerService;
 
     @Autowired
-    public ApplicationStartComponent(TravelPointApiService travelPointApiService) {
-        this.travelPointApiService = travelPointApiService;
+    public ApplicationStartComponent(RequestTokenHandlerService requestTokenHandlerService) {
+        this.requestTokenHandlerService = requestTokenHandlerService;
     }
 
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent event) {
-        travelPointApiService.updateOpenTripPlannerBox();
+        requestTokenHandlerService.updateOpenTripPlannerBox();
     }
 }

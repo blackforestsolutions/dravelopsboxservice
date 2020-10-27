@@ -1,6 +1,7 @@
-package de.blackforestsolutions.dravelopspolygonservice.service.communicationservice;
+package de.blackforestsolutions.dravelopspolygonservice.service.supportservice;
 
 import de.blackforestsolutions.dravelopsdatamodel.util.ApiToken;
+import de.blackforestsolutions.dravelopspolygonservice.service.communicationservice.OpenTripPlannerApiService;
 import org.awaitility.Awaitility;
 import org.awaitility.Duration;
 import org.junit.jupiter.api.Test;
@@ -26,13 +27,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class TravelPointApiServiceTest {
+class RequestTokenHandlerServiceTest {
 
     private final Box openTripPlannerBox = getBox();
     private final ApiToken openTripPlannerApiToken = getOpenTripPlannerApiToken();
     private final OpenTripPlannerApiService openTripPlannerApiService = mock(OpenTripPlannerApiService.class);
 
-    private final TravelPointApiService classUnderTest = new TravelPointApiServiceImpl(openTripPlannerBox, openTripPlannerApiToken, openTripPlannerApiService);
+    private final RequestTokenHandlerService classUnderTest = new RequestTokenHandlerServiceImpl(openTripPlannerBox, openTripPlannerApiToken, openTripPlannerApiService);
 
 
     @Test
@@ -64,6 +65,7 @@ class TravelPointApiServiceTest {
         assertThat(result.toString()).isEqualTo("Mon Aug 31 00:00:00 CEST 2020");
     }
 
+
     @Test
     void test_updateOpenTripPlannerBox_updates_polygon_within_service() {
         when(openTripPlannerApiService.extractBoxBy(any(ApiToken.class)))
@@ -79,6 +81,7 @@ class TravelPointApiServiceTest {
                 });
     }
 
+
     @Test
     void test_updateOpenTripPlannerBox_updates_not_polygon_when_error_is_thrown() {
         when(openTripPlannerApiService.extractBoxBy(any(ApiToken.class)))
@@ -93,6 +96,4 @@ class TravelPointApiServiceTest {
                     assertThat(openTripPlannerBox).isEqualTo(getBox());
                 });
     }
-
-
 }
