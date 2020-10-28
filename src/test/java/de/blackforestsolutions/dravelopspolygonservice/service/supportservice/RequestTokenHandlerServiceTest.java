@@ -18,9 +18,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.ApiTokenObjectMother.getOpenTripPlannerApiToken;
-import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.BoxObjectMother.getBox;
-import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.BoxObjectMother.getVrsBox;
+import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.ApiTokenObjectMother.*;
+import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.BoxObjectMother.getOpenTripPlannerBox;
+import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.BoxObjectMother.getOpenTripPlannerStartBox;
 import static de.blackforestsolutions.dravelopsdatamodel.testutil.TestUtils.getPropertyFromFileAsString;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 
 class RequestTokenHandlerServiceTest {
 
-    private final Box openTripPlannerBox = getBox();
+    private final Box openTripPlannerBox = getOpenTripPlannerStartBox();
     private final ApiToken openTripPlannerApiToken = getOpenTripPlannerApiToken();
     private final OpenTripPlannerApiService openTripPlannerApiService = mock(OpenTripPlannerApiService.class);
 
@@ -37,7 +37,7 @@ class RequestTokenHandlerServiceTest {
 
 
     @Test
-    @DisabledOnOs(OS.LINUX)
+    @DisabledOnOs(OS.WINDOWS)
     void test_cron_from_properties_is_executed_next_time_correctly_relative_to_last_time() throws ParseException {
         // Locale.US as github workflow is apparently not executed in germany
         SimpleDateFormat formatter = new SimpleDateFormat("EE MMM dd HH:mm:ss zzzz yyyy", Locale.US);
@@ -65,11 +65,10 @@ class RequestTokenHandlerServiceTest {
         assertThat(result.toString()).isEqualTo("Mon Aug 31 00:00:00 CEST 2020");
     }
 
-
     @Test
     void test_updateOpenTripPlannerBox_updates_polygon_within_service() {
         when(openTripPlannerApiService.extractBoxBy(any(ApiToken.class)))
-                .thenReturn(Mono.just(getVrsBox()));
+                .thenReturn(Mono.just(getOpenTripPlannerBox()));
 
         classUnderTest.updateOpenTripPlannerBox();
 
@@ -77,7 +76,7 @@ class RequestTokenHandlerServiceTest {
                 .atMost(Duration.ONE_SECOND)
                 .untilAsserted(() -> {
                     Box openTripPlannerBox = (Box) ReflectionTestUtils.getField(classUnderTest, "openTripPlannerBox");
-                    assertThat(openTripPlannerBox).isEqualTo(getVrsBox());
+                    assertThat(openTripPlannerBox).isEqualTo(getOpenTripPlannerBox());
                 });
     }
 
@@ -93,7 +92,18 @@ class RequestTokenHandlerServiceTest {
                 .atMost(Duration.ONE_SECOND)
                 .untilAsserted(() -> {
                     Box openTripPlannerBox = (Box) ReflectionTestUtils.getField(classUnderTest, "openTripPlannerBox");
-                    assertThat(openTripPlannerBox).isEqualTo(getBox());
+                    assertThat(openTripPlannerBox).isEqualTo(getOpenTripPlannerStartBox());
                 });
+    }
+
+    @Test
+    void test_getRequestApiTokenWith_polygonToken_and_configuredPeliasApiToken_returns_merged_token_for_autocompleteCall() {
+        ApiToken polygonTokenTestData = getPolygonApiToken();
+        ApiToken configuredPeliasTestData = getConfiguredPeliasAutocompleteApiToken();
+
+        ApiToken result = classUnderTest.getRequestApiTokenWith(polygonTokenTestData, configuredPeliasTestData);
+
+        assertThat(result).isEqualToIgnoringGivenFields(getPeliasAutocompleteApiToken(), "box");
+        assertThat(result.getBox()).isEqualTo(getOpenTripPlannerStartBox());
     }
 }

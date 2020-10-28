@@ -27,7 +27,7 @@ public class TravelPointController {
     public Flux<String> retrievePeliasTravelPoints(@RequestBody String request) {
         return Optional.ofNullable(request)
                 .map(travelPointApiService::retrieveTravelPointsFromApiService)
-                .orElseGet(() ->{
+                .orElseGet(() -> {
                     log.warn("No provided request body!");
                     return Flux.empty();
                 });
