@@ -37,7 +37,7 @@ class RequestTokenHandlerServiceTest {
 
 
     @Test
-    @DisabledOnOs(OS.WINDOWS)
+    @DisabledOnOs(OS.LINUX)
     void test_cron_from_properties_is_executed_next_time_correctly_relative_to_last_time() throws ParseException {
         // Locale.US as github workflow is apparently not executed in germany
         SimpleDateFormat formatter = new SimpleDateFormat("EE MMM dd HH:mm:ss zzzz yyyy", Locale.US);
