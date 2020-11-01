@@ -1,37 +1,42 @@
 package de.blackforestsolutions.dravelopspolygonservice.service.communicationservice;
 
 import de.blackforestsolutions.dravelopsdatamodel.util.ApiToken;
+import de.blackforestsolutions.dravelopsdatamodel.util.DravelOpsJsonMapper;
+import de.blackforestsolutions.dravelopspolygonservice.exceptionhandling.ExceptionHandlerService;
+import de.blackforestsolutions.dravelopspolygonservice.service.supportservice.RequestTokenHandlerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.geo.Box;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 
 @Slf4j
 @Service
 public class TravelPointApiServiceImpl implements TravelPointApiService {
 
-    private Box openTripPlannerBox;
-    private final ApiToken openTripPlannerApiToken;
-    private final OpenTripPlannerApiService openTripPlannerApiService;
+    private final DravelOpsJsonMapper dravelOpsJsonMapper = new DravelOpsJsonMapper();
+    private final RequestTokenHandlerService requestTokenHandlerService;
+    private final ExceptionHandlerService exceptionHandlerService;
+    private final ApiToken peliasApiToken;
+    private final PeliasApiService peliasApiService;
 
     @Autowired
-    public TravelPointApiServiceImpl(Box openTripPlannerBox, ApiToken openTripPlannerApiToken, OpenTripPlannerApiService openTripPlannerApiService) {
-        this.openTripPlannerBox = openTripPlannerBox;
-        this.openTripPlannerApiToken = openTripPlannerApiToken;
-        this.openTripPlannerApiService = openTripPlannerApiService;
+    public TravelPointApiServiceImpl(RequestTokenHandlerService requestTokenHandlerService, ExceptionHandlerService exceptionHandlerService, ApiToken peliasApiToken, PeliasApiService peliasApiService) {
+        this.requestTokenHandlerService = requestTokenHandlerService;
+        this.exceptionHandlerService = exceptionHandlerService;
+        this.peliasApiToken = peliasApiToken;
+        this.peliasApiService = peliasApiService;
     }
 
     @Override
-    @Scheduled(cron = "${otp.polygonupdatetime}")
-    public void updateOpenTripPlannerBox() {
-        openTripPlannerApiService.extractBoxBy(openTripPlannerApiToken)
-                .doOnError(e -> log.error("Error while updating Polygon: ", e))
-                .onErrorStop()
-                .subscribe(box -> {
-                    openTripPlannerBox = box;
-//                   05.10.2020 Placeholder to defend pmd violation until pelias is implemented
-                    log.info("Polygon from OpenTripPlanner was updated: ", openTripPlannerBox);
-                });
+    public Flux<String> retrieveTravelPointsFromApiService(String userRequestToken) {
+        return Mono.just(userRequestToken)
+                .flatMap(dravelOpsJsonMapper::mapJsonToApiToken)
+                .map(userToken -> requestTokenHandlerService.getRequestApiTokenWith(userToken, peliasApiToken))
+                .flatMapMany(peliasApiService::extractTravelPointsFrom)
+                .flatMap(exceptionHandlerService::handleExceptions)
+                .flatMap(dravelOpsJsonMapper::map)
+                .onErrorResume(exceptionHandlerService::handleExceptions);
     }
 }

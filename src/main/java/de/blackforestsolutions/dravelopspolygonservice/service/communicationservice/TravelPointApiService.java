@@ -1,8 +1,7 @@
 package de.blackforestsolutions.dravelopspolygonservice.service.communicationservice;
 
-import org.springframework.scheduling.annotation.Scheduled;
+import reactor.core.publisher.Flux;
 
 public interface TravelPointApiService {
-    @Scheduled(cron = "${otp.polygonupdatetime}")
-    void updateOpenTripPlannerBox();
+    Flux<String> retrieveTravelPointsFromApiService(String request);
 }

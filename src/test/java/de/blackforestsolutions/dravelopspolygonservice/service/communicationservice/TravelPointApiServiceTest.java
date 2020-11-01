@@ -1,98 +1,124 @@
 package de.blackforestsolutions.dravelopspolygonservice.service.communicationservice;
 
+import de.blackforestsolutions.dravelopsdatamodel.CallStatus;
+import de.blackforestsolutions.dravelopsdatamodel.Status;
+import de.blackforestsolutions.dravelopsdatamodel.TravelPoint;
 import de.blackforestsolutions.dravelopsdatamodel.util.ApiToken;
-import org.awaitility.Awaitility;
-import org.awaitility.Duration;
+import de.blackforestsolutions.dravelopspolygonservice.exceptionhandling.ExceptionHandlerService;
+import de.blackforestsolutions.dravelopspolygonservice.exceptionhandling.ExceptionHandlerServiceImpl;
+import de.blackforestsolutions.dravelopspolygonservice.service.supportservice.RequestTokenHandlerService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.condition.OS;
-import org.springframework.data.geo.Box;
-import org.springframework.scheduling.TriggerContext;
-import org.springframework.scheduling.support.CronTrigger;
-import org.springframework.test.util.ReflectionTestUtils;
-import reactor.core.publisher.Mono;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
+import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
-import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.ApiTokenObjectMother.getOpenTripPlannerApiToken;
-import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.BoxObjectMother.getBox;
-import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.BoxObjectMother.getVrsBox;
-import static de.blackforestsolutions.dravelopsdatamodel.testutil.TestUtils.getPropertyFromFileAsString;
+import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.ApiTokenObjectMother.*;
+import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.TravelPointObjectMother.getGermanyTravelPoint;
+import static de.blackforestsolutions.dravelopsdatamodel.testutil.TestUtils.toJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class TravelPointApiServiceTest {
 
-    private final Box openTripPlannerBox = getBox();
-    private final ApiToken openTripPlannerApiToken = getOpenTripPlannerApiToken();
-    private final OpenTripPlannerApiService openTripPlannerApiService = mock(OpenTripPlannerApiService.class);
+    private final ExceptionHandlerService exceptionHandlerService = spy(ExceptionHandlerServiceImpl.class);
+    private final RequestTokenHandlerService requestTokenHandlerService = spy(RequestTokenHandlerService.class);
+    private final ApiToken peliasApiToken = getConfiguredPeliasAutocompleteApiToken();
+    private final PeliasApiService peliasApiService = mock(PeliasApiServiceImpl.class);
 
-    private final TravelPointApiService classUnderTest = new TravelPointApiServiceImpl(openTripPlannerBox, openTripPlannerApiToken, openTripPlannerApiService);
+    private final TravelPointApiService classUnderTest = new TravelPointApiServiceImpl(requestTokenHandlerService, exceptionHandlerService, peliasApiToken, peliasApiService);
 
+    @BeforeEach
+    void init() {
+        when(requestTokenHandlerService.getRequestApiTokenWith(any(ApiToken.class), any(ApiToken.class)))
+                .thenReturn(getPeliasAutocompleteApiToken());
 
-    @Test
-    @DisabledOnOs(OS.LINUX)
-    void test_cron_from_properties_is_executed_next_time_correctly_relative_to_last_time() throws ParseException {
-        // Locale.US as github workflow is apparently not executed in germany
-        SimpleDateFormat formatter = new SimpleDateFormat("EE MMM dd HH:mm:ss zzzz yyyy", Locale.US);
-        Date lastExecutionTestDate = formatter.parse("Mon Aug 30 00:00:00 CEST 2020");
-        String cron = getPropertyFromFileAsString("application-bw-dev.properties", "otp.polygonupdatetime");
-
-        CronTrigger cronUnderTest = new CronTrigger(cron);
-        Date result = cronUnderTest.nextExecutionTime(new TriggerContext() {
-            @Override
-            public Date lastScheduledExecutionTime() {
-                return lastExecutionTestDate;
-            }
-
-            @Override
-            public Date lastActualExecutionTime() {
-                return lastExecutionTestDate;
-            }
-
-            @Override
-            public Date lastCompletionTime() {
-                return lastExecutionTestDate;
-            }
-        });
-
-        assertThat(result.toString()).isEqualTo("Mon Aug 31 00:00:00 CEST 2020");
+        when(peliasApiService.extractTravelPointsFrom(any(ApiToken.class))).thenReturn(Flux.just(
+                new CallStatus<>(getGermanyTravelPoint(), Status.SUCCESS, null),
+                new CallStatus<>(null, Status.FAILED, new Exception())
+        ));
     }
 
     @Test
-    void test_updateOpenTripPlannerBox_updates_polygon_within_service() {
-        when(openTripPlannerApiService.extractBoxBy(any(ApiToken.class)))
-                .thenReturn(Mono.just(getVrsBox()));
+    void test_retrieveTravelPointsFromApiService_with_polygonToken_requestTokenHandler_exceptionHandler_and_apiService_returns_json_travelPoints() {
+        String polygonTestToken = toJson(getPolygonApiToken());
 
-        classUnderTest.updateOpenTripPlannerBox();
+        Flux<String> result = classUnderTest.retrieveTravelPointsFromApiService(polygonTestToken);
 
-        Awaitility.await()
-                .atMost(Duration.ONE_SECOND)
-                .untilAsserted(() -> {
-                    Box openTripPlannerBox = (Box) ReflectionTestUtils.getField(classUnderTest, "openTripPlannerBox");
-                    assertThat(openTripPlannerBox).isEqualTo(getVrsBox());
-                });
+        StepVerifier.create(result)
+                .expectNext(toJson(getGermanyTravelPoint()))
+                .verifyComplete();
     }
 
     @Test
-    void test_updateOpenTripPlannerBox_updates_not_polygon_when_error_is_thrown() {
-        when(openTripPlannerApiService.extractBoxBy(any(ApiToken.class)))
-                .thenReturn(Mono.error(new NullPointerException()));
+    void test_retrieveTravelPointsFromApiService_with_polygonToken_requestTokenHandler_exceptionHandler_and_apiService_is_executed_correctly() {
+        ArgumentCaptor<ApiToken> polygonTokenArg = ArgumentCaptor.forClass(ApiToken.class);
+        ArgumentCaptor<ApiToken> configuredTokenArg = ArgumentCaptor.forClass(ApiToken.class);
+        ArgumentCaptor<ApiToken> mergedTokenArg = ArgumentCaptor.forClass(ApiToken.class);
+        ArgumentCaptor<CallStatus<TravelPoint>> callStatusArg = ArgumentCaptor.forClass(CallStatus.class);
+        String polygonTestToken = toJson(getPolygonApiToken());
 
-        classUnderTest.updateOpenTripPlannerBox();
+        classUnderTest.retrieveTravelPointsFromApiService(polygonTestToken).collectList().block();
 
-        Awaitility.await()
-                .atMost(Duration.ONE_SECOND)
-                .untilAsserted(() -> {
-                    Box openTripPlannerBox = (Box) ReflectionTestUtils.getField(classUnderTest, "openTripPlannerBox");
-                    assertThat(openTripPlannerBox).isEqualTo(getBox());
-                });
+        InOrder inOrder = inOrder(requestTokenHandlerService, peliasApiService, exceptionHandlerService);
+        inOrder.verify(requestTokenHandlerService, times(1)).getRequestApiTokenWith(polygonTokenArg.capture(), configuredTokenArg.capture());
+        inOrder.verify(peliasApiService, times(1)).extractTravelPointsFrom(mergedTokenArg.capture());
+        inOrder.verify(exceptionHandlerService, times(2)).handleExceptions(callStatusArg.capture());
+        inOrder.verifyNoMoreInteractions();
+        assertThat(polygonTokenArg.getValue()).isEqualToComparingFieldByField(getPolygonApiToken());
+        assertThat(configuredTokenArg.getValue()).isEqualToComparingFieldByField(getConfiguredPeliasAutocompleteApiToken());
+        assertThat(mergedTokenArg.getValue()).isEqualToComparingFieldByField(getPeliasAutocompleteApiToken());
+        assertThat(callStatusArg.getAllValues().size()).isEqualTo(2);
+        assertThat(callStatusArg.getAllValues().get(0).getStatus()).isEqualTo(Status.SUCCESS);
+        assertThat(callStatusArg.getAllValues().get(0).getThrowable()).isNull();
+        assertThat(callStatusArg.getAllValues().get(0).getCalledObject()).isInstanceOf(TravelPoint.class);
+        assertThat(callStatusArg.getAllValues().get(1).getStatus()).isEqualTo(Status.FAILED);
+        assertThat(callStatusArg.getAllValues().get(1).getCalledObject()).isNull();
+        assertThat(callStatusArg.getAllValues().get(1).getThrowable()).isInstanceOf(Exception.class);
     }
 
+    @Test
+    void test_retrieveTravelPointsFromApiService_with_polygonToken_and_thrown_exception_returns_zero_travelPoints() {
+        String polygonTestToken = toJson(getPolygonApiToken());
+        when(requestTokenHandlerService.getRequestApiTokenWith(any(ApiToken.class), any(ApiToken.class)))
+                .thenThrow(new NullPointerException());
+
+        Flux<String> result = classUnderTest.retrieveTravelPointsFromApiService(polygonTestToken);
+
+        StepVerifier.create(result)
+                .expectNextCount(0L)
+                .verifyComplete();
+        verify(exceptionHandlerService, times(1)).handleExceptions(any(Throwable.class));
+    }
+
+    @Test
+    void test_retrieveTravelPointsFromApiService_with_polygonToken_and_error_returns_zero_travelPoints_when_apiService_failed() {
+        String polygonTestToken = toJson(getPolygonApiToken());
+        when(peliasApiService.extractTravelPointsFrom(any(ApiToken.class)))
+                .thenReturn(Flux.error(new Exception()));
+
+        Flux<String> result = classUnderTest.retrieveTravelPointsFromApiService(polygonTestToken);
+
+        StepVerifier.create(result)
+                .expectNextCount(0L)
+                .verifyComplete();
+        verify(exceptionHandlerService, times(1)).handleExceptions(any(Throwable.class));
+    }
+
+    @Test
+    void test_retrieveTravelPointsFromApiService_with_polygonToken_and_error_call_status_returns_zero_travelPoints_when_apiService_failed() {
+        String polygonTestToken = toJson(getPolygonApiToken());
+        when(peliasApiService.extractTravelPointsFrom(any(ApiToken.class)))
+                .thenReturn(Flux.just(new CallStatus<>(null, Status.FAILED, new Exception())));
+
+        Flux<String> result = classUnderTest.retrieveTravelPointsFromApiService(polygonTestToken);
+
+        StepVerifier.create(result)
+                .expectNextCount(0L)
+                .verifyComplete();
+        verify(exceptionHandlerService, times(1)).handleExceptions(any(CallStatus.class));
+    }
 
 }
