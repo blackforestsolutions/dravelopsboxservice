@@ -42,7 +42,7 @@ class RequestTokenHandlerServiceTest {
         // Locale.US as github workflow is apparently not executed in germany
         SimpleDateFormat formatter = new SimpleDateFormat("EE MMM dd HH:mm:ss zzzz yyyy", Locale.US);
         Date lastExecutionTestDate = formatter.parse("Mon Aug 30 00:00:00 CEST 2020");
-        String cron = getPropertyFromFileAsString("application-bw-dev.properties", "otp.polygonupdatetime");
+        String cron = getPropertyFromFileAsString("application-dev.properties", "otp.polygonupdatetime");
 
         CronTrigger cronUnderTest = new CronTrigger(cron);
         Date result = cronUnderTest.nextExecutionTime(new TriggerContext() {
