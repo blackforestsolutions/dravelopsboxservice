@@ -43,7 +43,7 @@ class TravelPointApiServiceIT {
     }
 
     @Test
-    void test_retrieveTravelPointsFromApiService_with_incorrect_apiToken_return_zero_results() {
+    void test_retrieveTravelPointsFromApiService_with_incorrect_apiToken_return_zero_travelPoints() {
         ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(polygonApiToken.build());
         testData.setDeparture("Noooooooooooooo expected Result");
         String jsonTestData = toJson(testData.build());
