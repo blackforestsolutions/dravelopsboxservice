@@ -1,20 +1,16 @@
 package de.blackforestsolutions.dravelopspolygonservice.service.communicationservice;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.blackforestsolutions.dravelopsdatamodel.util.ApiToken;
 import de.blackforestsolutions.dravelopsgeneratedcontent.opentripplanner.polygon.OpenTripPlannerPolygonResponse;
-import de.blackforestsolutions.dravelopspolygonservice.service.communicationservice.restcalls.CallService;
 import de.blackforestsolutions.dravelopspolygonservice.service.callbuilderservice.OpenTripPlannerHttpCallBuilderService;
+import de.blackforestsolutions.dravelopspolygonservice.service.communicationservice.restcalls.CallService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.springframework.data.geo.Box;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -39,9 +35,9 @@ class OpenTripPlannerApiServiceTest {
         when(openTripPlannerHttpCallBuilderService.buildOpenTripPlannerPolygonPathWith(any(ApiToken.class)))
                 .thenReturn("");
 
-        String json = getResourceFileAsString("json/openTripPlannerPolygonJson.json");
-        when(callService.get(anyString(), any(HttpHeaders.class)))
-                .thenReturn(Mono.just(new ResponseEntity<>(json, HttpStatus.OK)));
+        OpenTripPlannerPolygonResponse openTripPlannerPolygonResponse = retrieveJsonToPojo("json/openTripPlannerPolygonJson.json", OpenTripPlannerPolygonResponse.class);
+        when(callService.getOne(anyString(), any(HttpHeaders.class), eq(OpenTripPlannerPolygonResponse.class)))
+                .thenReturn(Mono.just(openTripPlannerPolygonResponse));
     }
 
     @Test
@@ -66,7 +62,7 @@ class OpenTripPlannerApiServiceTest {
 
         InOrder inOrder = inOrder(openTripPlannerHttpCallBuilderService, callService);
         inOrder.verify(openTripPlannerHttpCallBuilderService, times(1)).buildOpenTripPlannerPolygonPathWith(apiTokenArg.capture());
-        inOrder.verify(callService, times(1)).get(urlArg.capture(), httpHeadersArg.capture());
+        inOrder.verify(callService, times(1)).getOne(urlArg.capture(), httpHeadersArg.capture(), eq(OpenTripPlannerPolygonResponse.class));
         inOrder.verifyNoMoreInteractions();
         assertThat(apiTokenArg.getValue()).isEqualToComparingFieldByField(getOpenTripPlannerApiToken());
         assertThat(urlArg.getValue()).isEqualTo("http://localhost:8089");
@@ -86,27 +82,12 @@ class OpenTripPlannerApiServiceTest {
     }
 
     @Test
-    void test_extractBoxBy_apiToken_and_bad_http_request_returns_jsonParseException() {
-        ApiToken testData = getOpenTripPlannerApiToken();
-        when(callService.get(anyString(), any(HttpHeaders.class)))
-                .thenReturn(Mono.just(new ResponseEntity<>("error", HttpStatus.BAD_REQUEST)));
-
-        Mono<Box> result = classUnderTest.extractBoxBy(testData);
-
-        StepVerifier.create(result)
-                .expectError(JsonParseException.class)
-                .verify();
-    }
-
-    @Test
     void test_extractBoxBy_apiToken_returns_error_when_coordinate_is_null() throws JsonProcessingException {
         ApiToken testData = getOpenTripPlannerApiToken();
-        String polygonJson = getResourceFileAsString("json/openTripPlannerPolygonJson.json");
-        OpenTripPlannerPolygonResponse polygonResponse = retrieveJsonToPojo(polygonJson, OpenTripPlannerPolygonResponse.class);
+        OpenTripPlannerPolygonResponse polygonResponse = retrieveJsonToPojo("json/openTripPlannerPolygonJson.json", OpenTripPlannerPolygonResponse.class);
         polygonResponse.setLowerLeftLatitude(null);
-        polygonJson = new ObjectMapper().writeValueAsString(polygonResponse);
-        when(callService.get(anyString(), any(HttpHeaders.class)))
-                .thenReturn(Mono.just(new ResponseEntity<>(polygonJson, HttpStatus.OK)));
+        when(callService.getOne(anyString(), any(HttpHeaders.class), eq(OpenTripPlannerPolygonResponse.class)))
+                .thenReturn(Mono.just(polygonResponse));
 
         Mono<Box> result = classUnderTest.extractBoxBy(testData);
 
@@ -141,7 +122,7 @@ class OpenTripPlannerApiServiceTest {
     @Test
     void test_extractBoxBy_apiToken_and_with_error_by_callService_returns_error() {
         ApiToken testData = getOpenTripPlannerApiToken();
-        when(callService.get(anyString(), any(HttpHeaders.class)))
+        when(callService.getOne(anyString(), any(HttpHeaders.class), eq(OpenTripPlannerPolygonResponse.class)))
                 .thenReturn(Mono.error(new RuntimeException()));
 
         Mono<Box> result = classUnderTest.extractBoxBy(testData);

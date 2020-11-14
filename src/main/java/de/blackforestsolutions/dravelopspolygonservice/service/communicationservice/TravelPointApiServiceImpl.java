@@ -1,7 +1,7 @@
 package de.blackforestsolutions.dravelopspolygonservice.service.communicationservice;
 
+import de.blackforestsolutions.dravelopsdatamodel.TravelPoint;
 import de.blackforestsolutions.dravelopsdatamodel.util.ApiToken;
-import de.blackforestsolutions.dravelopsdatamodel.util.DravelOpsJsonMapper;
 import de.blackforestsolutions.dravelopspolygonservice.exceptionhandling.ExceptionHandlerService;
 import de.blackforestsolutions.dravelopspolygonservice.service.supportservice.RequestTokenHandlerService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,6 @@ import reactor.core.publisher.Mono;
 @Service
 public class TravelPointApiServiceImpl implements TravelPointApiService {
 
-    private final DravelOpsJsonMapper dravelOpsJsonMapper = new DravelOpsJsonMapper();
     private final RequestTokenHandlerService requestTokenHandlerService;
     private final ExceptionHandlerService exceptionHandlerService;
     private final ApiToken peliasApiToken;
@@ -30,13 +29,11 @@ public class TravelPointApiServiceImpl implements TravelPointApiService {
     }
 
     @Override
-    public Flux<String> retrieveTravelPointsFromApiService(String userRequestToken) {
+    public Flux<TravelPoint> retrieveTravelPointsFromApiService(ApiToken userRequestToken) {
         return Mono.just(userRequestToken)
-                .flatMap(dravelOpsJsonMapper::mapJsonToApiToken)
                 .map(userToken -> requestTokenHandlerService.getRequestApiTokenWith(userToken, peliasApiToken))
                 .flatMapMany(peliasApiService::extractTravelPointsFrom)
                 .flatMap(exceptionHandlerService::handleExceptions)
-                .flatMap(dravelOpsJsonMapper::map)
                 .onErrorResume(exceptionHandlerService::handleExceptions);
     }
 }

@@ -1,6 +1,5 @@
 package de.blackforestsolutions.dravelopspolygonservice.service.communicationservice;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import de.blackforestsolutions.dravelopsdatamodel.CallStatus;
 import de.blackforestsolutions.dravelopsdatamodel.Status;
 import de.blackforestsolutions.dravelopsdatamodel.TravelPoint;
@@ -18,15 +17,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.ApiTokenObjectMother.getPeliasAutocompleteApiToken;
 import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.TravelPointObjectMother.getGermanyTravelPoint;
-import static de.blackforestsolutions.dravelopsdatamodel.testutil.TestUtils.getResourceFileAsString;
+import static de.blackforestsolutions.dravelopsdatamodel.testutil.TestUtils.retrieveJsonToPojo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -45,8 +42,9 @@ class PeliasApiServiceTest {
         when(peliasHttpCallBuilderService.buildPeliasAutocompletePathWith(any(ApiToken.class)))
                 .thenReturn("");
 
-        when(callService.get(anyString(), any(HttpHeaders.class)))
-                .thenReturn(Mono.just(new ResponseEntity<>(getResourceFileAsString("json/peliasResult.json"), HttpStatus.OK)));
+        PeliasTravelPointResponse peliasTravelPointResponse = retrieveJsonToPojo("json/peliasResult.json", PeliasTravelPointResponse.class);
+        when(callService.getOne(anyString(), any(HttpHeaders.class), eq(PeliasTravelPointResponse.class)))
+                .thenReturn(Mono.just(peliasTravelPointResponse));
 
         when(peliasMapperService.extractTravelPointsFrom(any(PeliasTravelPointResponse.class)))
                 .thenReturn(Flux.just(new CallStatus<>(getGermanyTravelPoint(), Status.SUCCESS, null)));
@@ -79,7 +77,7 @@ class PeliasApiServiceTest {
 
         InOrder inOrder = inOrder(peliasHttpCallBuilderService, peliasMapperService, callService);
         inOrder.verify(peliasHttpCallBuilderService, times(1)).buildPeliasAutocompletePathWith(apiTokenArg.capture());
-        inOrder.verify(callService, times(1)).get(urlArg.capture(), httpHeadersArg.capture());
+        inOrder.verify(callService, times(1)).getOne(urlArg.capture(), httpHeadersArg.capture(), eq(PeliasTravelPointResponse.class));
         inOrder.verify(peliasMapperService, times(1)).extractTravelPointsFrom(responseArg.capture());
         inOrder.verifyNoMoreInteractions();
         assertThat(apiTokenArg.getValue()).isEqualToComparingFieldByField(getPeliasAutocompleteApiToken());
@@ -100,40 +98,6 @@ class PeliasApiServiceTest {
                     assertThat(error.getStatus()).isEqualTo(Status.FAILED);
                     assertThat(error.getCalledObject()).isNull();
                     assertThat(error.getThrowable()).isInstanceOf(NullPointerException.class);
-                })
-                .verifyComplete();
-    }
-
-    @Test
-    void test_extractTravelPointsFrom_apiToken_and_failed_call_returns_failed_call_status() {
-        ApiToken testData = getPeliasAutocompleteApiToken();
-        when(callService.get(anyString(), any(HttpHeaders.class)))
-                .thenReturn(Mono.just(new ResponseEntity<>("error", HttpStatus.BAD_REQUEST)));
-
-        Flux<CallStatus<TravelPoint>> result = classUnderTest.extractTravelPointsFrom(testData);
-
-        StepVerifier.create(result)
-                .assertNext(error -> {
-                    assertThat(error.getStatus()).isEqualTo(Status.FAILED);
-                    assertThat(error.getCalledObject()).isNull();
-                    assertThat(error.getThrowable()).isInstanceOf(JsonParseException.class);
-                })
-                .verifyComplete();
-    }
-
-    @Test
-    void test_extractTravelPointsFrom_apiToken_returns_failed_call_status_when_exception_is_thrown_inside_stream() {
-        ApiToken testData = getPeliasAutocompleteApiToken();
-        when(callService.get(anyString(), any(HttpHeaders.class)))
-                .thenReturn(Mono.just(new ResponseEntity<>(null, HttpStatus.OK)));
-
-        Flux<CallStatus<TravelPoint>> result = classUnderTest.extractTravelPointsFrom(testData);
-
-        StepVerifier.create(result)
-                .assertNext(error -> {
-                    assertThat(error.getStatus()).isEqualTo(Status.FAILED);
-                    assertThat(error.getCalledObject()).isNull();
-                    assertThat(error.getThrowable()).isInstanceOf(IllegalArgumentException.class);
                 })
                 .verifyComplete();
     }
@@ -172,8 +136,9 @@ class PeliasApiServiceTest {
     @Test
     void test_extractTravelPointsFrom_apiToken_and_no_result_json_returns_failed_call_status_with_noExternalResultFoundException() {
         ApiToken testData = getPeliasAutocompleteApiToken();
-        when(callService.get(anyString(), any(HttpHeaders.class)))
-                .thenReturn(Mono.just(new ResponseEntity<>(getResourceFileAsString("json/peliasNoResult.json"), HttpStatus.OK)));
+        PeliasTravelPointResponse testResult = retrieveJsonToPojo("json/peliasNoResult.json", PeliasTravelPointResponse.class);
+        when(callService.getOne(anyString(), any(HttpHeaders.class), eq(PeliasTravelPointResponse.class)))
+                .thenReturn(Mono.just(testResult));
 
         Flux<CallStatus<TravelPoint>> result = classUnderTest.extractTravelPointsFrom(testData);
 
@@ -189,7 +154,7 @@ class PeliasApiServiceTest {
     @Test
     void test_extractTravelPointsFrom_apiToken_and_error_by_callService_returns_failed_call_status() {
         ApiToken testData = getPeliasAutocompleteApiToken();
-        when(callService.get(anyString(), any(HttpHeaders.class)))
+        when(callService.getOne(anyString(), any(HttpHeaders.class), eq(PeliasTravelPointResponse.class)))
                 .thenReturn(Mono.error(new Exception()));
 
         Flux<CallStatus<TravelPoint>> result = classUnderTest.extractTravelPointsFrom(testData);

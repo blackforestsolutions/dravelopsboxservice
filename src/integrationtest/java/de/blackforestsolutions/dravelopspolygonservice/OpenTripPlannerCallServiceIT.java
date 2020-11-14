@@ -34,14 +34,10 @@ class OpenTripPlannerCallServiceIT {
         ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(openTripPlannerApiToken);
         testData.setPath(httpCallBuilderService.buildOpenTripPlannerPolygonPathWith(testData.build()));
 
-        Mono<ResponseEntity<String>> result = callService.get(buildUrlWith(testData.build()).toString(), HttpHeaders.EMPTY);
+        Mono<OpenTripPlannerPolygonResponse> result = callService.getOne(buildUrlWith(testData.build()).toString(), HttpHeaders.EMPTY, OpenTripPlannerPolygonResponse.class);
 
         StepVerifier.create(result)
-                .assertNext(response -> {
-                    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-                    assertThat(response.getBody()).isNotEmpty();
-                    assertThat(retrieveJsonToPojo(response.getBody(), OpenTripPlannerPolygonResponse.class).getPolygon().getCoordinates().get(0).size()).isGreaterThan(4);
-                })
+                .assertNext(openTripPlannerPolygonResponse -> assertThat(openTripPlannerPolygonResponse.getPolygon().getCoordinates().get(0).size()).isGreaterThan(4))
                 .verifyComplete();
     }
 }

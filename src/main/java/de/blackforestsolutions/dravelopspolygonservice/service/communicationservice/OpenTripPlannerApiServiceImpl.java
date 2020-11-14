@@ -1,10 +1,9 @@
 package de.blackforestsolutions.dravelopspolygonservice.service.communicationservice;
 
 import de.blackforestsolutions.dravelopsdatamodel.util.ApiToken;
-import de.blackforestsolutions.dravelopsdatamodel.util.DravelOpsJsonMapper;
 import de.blackforestsolutions.dravelopsgeneratedcontent.opentripplanner.polygon.OpenTripPlannerPolygonResponse;
-import de.blackforestsolutions.dravelopspolygonservice.service.communicationservice.restcalls.CallService;
 import de.blackforestsolutions.dravelopspolygonservice.service.callbuilderservice.OpenTripPlannerHttpCallBuilderService;
+import de.blackforestsolutions.dravelopspolygonservice.service.communicationservice.restcalls.CallService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Box;
@@ -34,8 +33,7 @@ public class OpenTripPlannerApiServiceImpl implements OpenTripPlannerApiService 
     public Mono<Box> extractBoxBy(ApiToken apiToken) {
         try {
             String url = getPolygonRequestUrlWith(apiToken);
-            return callService.get(url, HttpHeaders.EMPTY)
-                    .flatMap(response -> convertToPojo(response.getBody()))
+            return callService.getOne(url, HttpHeaders.EMPTY, OpenTripPlannerPolygonResponse.class)
                     .map(responseBody -> extractBoxFrom(responseBody.getLowerLeftLatitude(), responseBody.getLowerLeftLongitude(), responseBody.getUpperRightLatitude(), responseBody.getUpperRightLongitude()));
         } catch (Exception e) {
             return Mono.error(e);
@@ -53,11 +51,6 @@ public class OpenTripPlannerApiServiceImpl implements OpenTripPlannerApiService 
         builder.setPath(openTripPlannerHttpCallBuilderService.buildOpenTripPlannerPolygonPathWith(builder.build()));
         URL request = buildUrlWith(builder.build());
         return request.toString();
-    }
-
-    private Mono<OpenTripPlannerPolygonResponse> convertToPojo(String json) {
-        DravelOpsJsonMapper mapper = new DravelOpsJsonMapper();
-        return mapper.mapJsonToPojo(json, OpenTripPlannerPolygonResponse.class);
     }
 
 }
