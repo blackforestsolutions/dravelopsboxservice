@@ -1,5 +1,6 @@
 package de.blackforestsolutions.dravelopspolygonservice;
 
+import de.blackforestsolutions.dravelopsdatamodel.objectmothers.ApiTokenObjectMother;
 import de.blackforestsolutions.dravelopsdatamodel.util.ApiToken;
 import de.blackforestsolutions.dravelopsgeneratedcontent.pelias.PeliasTravelPointResponse;
 import de.blackforestsolutions.dravelopspolygonservice.configuration.PeliasTestConfiguration;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import static de.blackforestsolutions.dravelopsdatamodel.testutil.TestUtils.retrieveJsonToPojo;
 import static de.blackforestsolutions.dravelopsdatamodel.util.DravelOpsHttpCallBuilder.buildUrlWith;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,6 +42,7 @@ public class PeliasCallServiceIT {
                 .assertNext(peliasTravelPointResponse -> {
                     assertThat(peliasTravelPointResponse.getFeatures().size()).isGreaterThan(0);
                     assertThat(peliasTravelPointResponse.getFeatures().size()).isLessThanOrEqualTo(testData.getMaxResults());
+
                 })
                 .verifyComplete();
     }
