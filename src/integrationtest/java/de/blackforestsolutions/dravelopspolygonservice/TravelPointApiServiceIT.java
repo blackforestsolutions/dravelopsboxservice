@@ -11,8 +11,6 @@ import org.springframework.context.annotation.Import;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
-import static de.blackforestsolutions.dravelopsdatamodel.testutil.TestUtils.retrieveJsonToPojo;
-import static de.blackforestsolutions.dravelopsdatamodel.testutil.TestUtils.toJson;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Import(TravelPointApiServiceTestConfiguration.class)
@@ -27,16 +25,15 @@ class TravelPointApiServiceIT {
 
     @Test
     void test_retrieveTravelPointsFromApiService_returns_result() {
-        String jsonTestData = toJson(polygonApiToken.build());
+        ApiToken testData = polygonApiToken.build();
 
-        Flux<String> result = classUnderTest.retrieveTravelPointsFromApiService(jsonTestData);
+        Flux<TravelPoint> result = classUnderTest.retrieveTravelPointsFromApiService(testData);
 
         StepVerifier.create(result)
                 .expectNextCount(1L)
                 .thenConsumeWhile(travelPoint -> {
-                    TravelPoint travelPointResult = retrieveJsonToPojo(travelPoint, TravelPoint.class);
-                    assertThat(travelPointResult.getName()).isNotEmpty();
-                    assertThat(travelPointResult.getPoint()).isNotNull();
+                    assertThat(travelPoint.getName()).isNotEmpty();
+                    assertThat(travelPoint.getPoint()).isNotNull();
                     return true;
                 })
                 .verifyComplete();
@@ -46,9 +43,8 @@ class TravelPointApiServiceIT {
     void test_retrieveTravelPointsFromApiService_with_incorrect_apiToken_return_zero_travelPoints() {
         ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(polygonApiToken.build());
         testData.setDeparture("Noooooooooooooo expected Result");
-        String jsonTestData = toJson(testData.build());
 
-        Flux<String> result = classUnderTest.retrieveTravelPointsFromApiService(jsonTestData);
+        Flux<TravelPoint> result = classUnderTest.retrieveTravelPointsFromApiService(testData.build());
 
         StepVerifier.create(result)
                 .expectNextCount(0L)

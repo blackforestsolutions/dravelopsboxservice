@@ -20,8 +20,7 @@ class PeliasMapperServiceTest {
 
     @Test
     void test_extractTravelPointsFrom_http_body_maps_correctly_to_travelPoints() {
-        String testDataJson = getResourceFileAsString("json/peliasResult.json");
-        PeliasTravelPointResponse testData = retrieveJsonToPojo(testDataJson, PeliasTravelPointResponse.class);
+        PeliasTravelPointResponse testData = retrieveJsonToPojo("json/peliasResult.json", PeliasTravelPointResponse.class);
 
         Flux<CallStatus<TravelPoint>> result = classUnderTest.extractTravelPointsFrom(testData);
 
@@ -61,8 +60,7 @@ class PeliasMapperServiceTest {
 
     @Test
     void test_extractTravelPointsFrom_body_returns_no_travelPoints_when_features_are_empty() {
-        String testDataJson = getResourceFileAsString("json/peliasNoResult.json");
-        PeliasTravelPointResponse testData = retrieveJsonToPojo(testDataJson, PeliasTravelPointResponse.class);
+        PeliasTravelPointResponse testData = retrieveJsonToPojo("json/peliasNoResult.json", PeliasTravelPointResponse.class);
 
         Flux<CallStatus<TravelPoint>> result = classUnderTest.extractTravelPointsFrom(testData);
 
@@ -73,8 +71,7 @@ class PeliasMapperServiceTest {
 
     @Test
     void test_extractTravelPointsFrom_body_with_error_in_first_element_returns_first_failed_call_status_and_rest_is_success() {
-        String testDataJson = getResourceFileAsString("json/peliasResult.json");
-        PeliasTravelPointResponse testData = retrieveJsonToPojo(testDataJson, PeliasTravelPointResponse.class);
+        PeliasTravelPointResponse testData = retrieveJsonToPojo("json/peliasResult.json", PeliasTravelPointResponse.class);
         testData.getFeatures().get(0).setProperties(null);
 
         Flux<CallStatus<TravelPoint>> result = classUnderTest.extractTravelPointsFrom(testData);
@@ -97,8 +94,7 @@ class PeliasMapperServiceTest {
 
     @Test
     void test_extractTravelPointsFrom_body_and_features_as_null_returns_a_failed_callStatus() {
-        String testDataJson = getResourceFileAsString("json/peliasResult.json");
-        PeliasTravelPointResponse testData = retrieveJsonToPojo(testDataJson, PeliasTravelPointResponse.class);
+        PeliasTravelPointResponse testData = retrieveJsonToPojo("json/peliasResult.json", PeliasTravelPointResponse.class);
         testData.setFeatures(null);
 
         Flux<CallStatus<TravelPoint>> result = classUnderTest.extractTravelPointsFrom(testData);

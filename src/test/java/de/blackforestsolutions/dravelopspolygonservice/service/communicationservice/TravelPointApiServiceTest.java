@@ -43,12 +43,12 @@ class TravelPointApiServiceTest {
 
     @Test
     void test_retrieveTravelPointsFromApiService_with_polygonToken_requestTokenHandler_exceptionHandler_and_apiService_returns_json_travelPoints() {
-        String polygonTestToken = toJson(getPolygonApiToken());
+        ApiToken testData = getPolygonApiToken();
 
-        Flux<String> result = classUnderTest.retrieveTravelPointsFromApiService(polygonTestToken);
+        Flux<TravelPoint> result = classUnderTest.retrieveTravelPointsFromApiService(testData);
 
         StepVerifier.create(result)
-                .expectNext(toJson(getGermanyTravelPoint()))
+                .assertNext(travelPoint -> assertThat(toJson(travelPoint)).isEqualTo(toJson(getGermanyTravelPoint())))
                 .verifyComplete();
     }
 
@@ -58,7 +58,7 @@ class TravelPointApiServiceTest {
         ArgumentCaptor<ApiToken> configuredTokenArg = ArgumentCaptor.forClass(ApiToken.class);
         ArgumentCaptor<ApiToken> mergedTokenArg = ArgumentCaptor.forClass(ApiToken.class);
         ArgumentCaptor<CallStatus<TravelPoint>> callStatusArg = ArgumentCaptor.forClass(CallStatus.class);
-        String polygonTestToken = toJson(getPolygonApiToken());
+        ApiToken polygonTestToken = getPolygonApiToken();
 
         classUnderTest.retrieveTravelPointsFromApiService(polygonTestToken).collectList().block();
 
@@ -81,11 +81,11 @@ class TravelPointApiServiceTest {
 
     @Test
     void test_retrieveTravelPointsFromApiService_with_polygonToken_and_thrown_exception_returns_zero_travelPoints() {
-        String polygonTestToken = toJson(getPolygonApiToken());
+        ApiToken polygonTestToken = getPolygonApiToken();
         when(requestTokenHandlerService.getRequestApiTokenWith(any(ApiToken.class), any(ApiToken.class)))
                 .thenThrow(new NullPointerException());
 
-        Flux<String> result = classUnderTest.retrieveTravelPointsFromApiService(polygonTestToken);
+        Flux<TravelPoint> result = classUnderTest.retrieveTravelPointsFromApiService(polygonTestToken);
 
         StepVerifier.create(result)
                 .expectNextCount(0L)
@@ -95,11 +95,11 @@ class TravelPointApiServiceTest {
 
     @Test
     void test_retrieveTravelPointsFromApiService_with_polygonToken_and_error_returns_zero_travelPoints_when_apiService_failed() {
-        String polygonTestToken = toJson(getPolygonApiToken());
+        ApiToken polygonTestToken = getPolygonApiToken();
         when(peliasApiService.extractTravelPointsFrom(any(ApiToken.class)))
                 .thenReturn(Flux.error(new Exception()));
 
-        Flux<String> result = classUnderTest.retrieveTravelPointsFromApiService(polygonTestToken);
+        Flux<TravelPoint> result = classUnderTest.retrieveTravelPointsFromApiService(polygonTestToken);
 
         StepVerifier.create(result)
                 .expectNextCount(0L)
@@ -109,11 +109,11 @@ class TravelPointApiServiceTest {
 
     @Test
     void test_retrieveTravelPointsFromApiService_with_polygonToken_and_error_call_status_returns_zero_travelPoints_when_apiService_failed() {
-        String polygonTestToken = toJson(getPolygonApiToken());
+        ApiToken polygonTestToken = getPolygonApiToken();
         when(peliasApiService.extractTravelPointsFrom(any(ApiToken.class)))
                 .thenReturn(Flux.just(new CallStatus<>(null, Status.FAILED, new Exception())));
 
-        Flux<String> result = classUnderTest.retrieveTravelPointsFromApiService(polygonTestToken);
+        Flux<TravelPoint> result = classUnderTest.retrieveTravelPointsFromApiService(polygonTestToken);
 
         StepVerifier.create(result)
                 .expectNextCount(0L)

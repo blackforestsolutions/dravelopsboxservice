@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -38,14 +36,13 @@ public class PeliasCallServiceIT {
         ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(peliasAutocompleteApiToken.build());
         testData.setPath(peliasHttpCallBuilderService.buildPeliasAutocompletePathWith(testData.build()));
 
-        Mono<ResponseEntity<String>> result = callService.get(buildUrlWith(testData.build()).toString(), HttpHeaders.EMPTY);
+        Mono<PeliasTravelPointResponse> result = callService.getOne(buildUrlWith(testData.build()).toString(), HttpHeaders.EMPTY, PeliasTravelPointResponse.class);
 
         StepVerifier.create(result)
-                .assertNext(response -> {
-                    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-                    assertThat(response.getBody()).isNotEmpty();
-                    assertThat(retrieveJsonToPojo(response.getBody(), PeliasTravelPointResponse.class).getFeatures().size()).isGreaterThan(0);
-                    assertThat(retrieveJsonToPojo(response.getBody(), PeliasTravelPointResponse.class).getFeatures().size()).isLessThanOrEqualTo(testData.getMaxResults());
+                .assertNext(peliasTravelPointResponse -> {
+                    assertThat(peliasTravelPointResponse.getFeatures().size()).isGreaterThan(0);
+                    assertThat(peliasTravelPointResponse.getFeatures().size()).isLessThanOrEqualTo(testData.getMaxResults());
+
                 })
                 .verifyComplete();
     }
