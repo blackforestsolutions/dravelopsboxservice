@@ -1,6 +1,6 @@
 package de.blackforestsolutions.dravelopspolygonservice.service.supportservice;
 
-import de.blackforestsolutions.dravelopsdatamodel.util.ApiToken;
+import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
 import de.blackforestsolutions.dravelopspolygonservice.service.communicationservice.OpenTripPlannerApiService;
 import org.awaitility.Awaitility;
 import org.awaitility.Duration;

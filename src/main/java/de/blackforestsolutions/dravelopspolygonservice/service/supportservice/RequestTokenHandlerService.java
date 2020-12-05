@@ -1,6 +1,6 @@
 package de.blackforestsolutions.dravelopspolygonservice.service.supportservice;
 
-import de.blackforestsolutions.dravelopsdatamodel.util.ApiToken;
+import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
 import org.springframework.scheduling.annotation.Scheduled;
 
 public interface RequestTokenHandlerService {

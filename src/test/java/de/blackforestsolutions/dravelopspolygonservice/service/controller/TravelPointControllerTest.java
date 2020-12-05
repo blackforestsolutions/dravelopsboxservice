@@ -1,7 +1,7 @@
 package de.blackforestsolutions.dravelopspolygonservice.service.controller;
 
 import de.blackforestsolutions.dravelopsdatamodel.TravelPoint;
-import de.blackforestsolutions.dravelopsdatamodel.util.ApiToken;
+import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
 import de.blackforestsolutions.dravelopspolygonservice.controller.TravelPointController;
 import de.blackforestsolutions.dravelopspolygonservice.service.communicationservice.TravelPointApiService;
 import de.blackforestsolutions.dravelopspolygonservice.service.communicationservice.TravelPointApiServiceImpl;

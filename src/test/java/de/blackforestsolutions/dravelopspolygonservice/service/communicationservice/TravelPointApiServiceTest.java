@@ -3,7 +3,7 @@ package de.blackforestsolutions.dravelopspolygonservice.service.communicationser
 import de.blackforestsolutions.dravelopsdatamodel.CallStatus;
 import de.blackforestsolutions.dravelopsdatamodel.Status;
 import de.blackforestsolutions.dravelopsdatamodel.TravelPoint;
-import de.blackforestsolutions.dravelopsdatamodel.util.ApiToken;
+import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
 import de.blackforestsolutions.dravelopspolygonservice.exceptionhandling.ExceptionHandlerService;
 import de.blackforestsolutions.dravelopspolygonservice.exceptionhandling.ExceptionHandlerServiceImpl;
 import de.blackforestsolutions.dravelopspolygonservice.service.supportservice.RequestTokenHandlerService;
