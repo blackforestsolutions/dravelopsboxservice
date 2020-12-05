@@ -1,6 +1,6 @@
 package de.blackforestsolutions.dravelopspolygonservice.service.callbuilderservice;
 
-import de.blackforestsolutions.dravelopsdatamodel.util.ApiToken;
+import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;

@@ -1,6 +1,6 @@
 package de.blackforestsolutions.dravelopspolygonservice.service.callbuilderservice;
 
-import de.blackforestsolutions.dravelopsdatamodel.util.ApiToken;
+import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;

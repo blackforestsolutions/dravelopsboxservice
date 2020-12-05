@@ -1,6 +1,6 @@
 package de.blackforestsolutions.dravelopspolygonservice.service.communicationservice;
 
-import de.blackforestsolutions.dravelopsdatamodel.util.ApiToken;
+import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
 import de.blackforestsolutions.dravelopsgeneratedcontent.opentripplanner.polygon.OpenTripPlannerPolygonResponse;
 import de.blackforestsolutions.dravelopspolygonservice.service.callbuilderservice.OpenTripPlannerHttpCallBuilderService;
 import de.blackforestsolutions.dravelopspolygonservice.service.communicationservice.restcalls.CallService;

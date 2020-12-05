@@ -1,7 +1,7 @@
 package de.blackforestsolutions.dravelopspolygonservice.service.communicationservice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import de.blackforestsolutions.dravelopsdatamodel.util.ApiToken;
+import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
 import de.blackforestsolutions.dravelopsgeneratedcontent.opentripplanner.polygon.OpenTripPlannerPolygonResponse;
 import de.blackforestsolutions.dravelopspolygonservice.service.callbuilderservice.OpenTripPlannerHttpCallBuilderService;
 import de.blackforestsolutions.dravelopspolygonservice.service.communicationservice.restcalls.CallService;
