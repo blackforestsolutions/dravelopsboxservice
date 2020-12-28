@@ -38,9 +38,9 @@ public class PeliasCallServiceIT {
 
         StepVerifier.create(result)
                 .assertNext(peliasTravelPointResponse -> {
+                    assertThat(peliasTravelPointResponse.getGeocoding().getQuery().getLang().getIso6391()).isEqualTo(testData.getLanguage().getLanguage());
                     assertThat(peliasTravelPointResponse.getFeatures().size()).isGreaterThan(0);
                     assertThat(peliasTravelPointResponse.getFeatures().size()).isLessThanOrEqualTo(testData.getMaxResults());
-
                 })
                 .verifyComplete();
     }
