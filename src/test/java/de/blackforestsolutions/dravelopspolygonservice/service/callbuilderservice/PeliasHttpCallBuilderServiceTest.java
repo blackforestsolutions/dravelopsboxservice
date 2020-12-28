@@ -20,7 +20,7 @@ class PeliasHttpCallBuilderServiceTest {
 
         String result = classUnderTest.buildPeliasAutocompletePathWith(testData);
 
-        assertThat(result).isEqualTo("/v1/autocomplete?text=Sick AG&size=10&lang=de&boundary.rect.min_lon=7.593844&boundary.rect.max_lon=9.798538&boundary.rect.min_lat=47.590746&boundary.rect.max_lat=49.717617&layers=venue,address,street,country,macroregion,region,macrocounty,county,locality,localadmin,borough,neighbourhood,coarse,postalcode");
+        assertThat(result).isEqualTo("/v1/autocomplete?text=Sick AG&size=10&lang=de-DE&boundary.rect.min_lon=7.593844&boundary.rect.max_lon=9.798538&boundary.rect.min_lat=47.590746&boundary.rect.max_lat=49.717617&layers=venue,address,street,country,macroregion,region,macrocounty,county,locality,localadmin,borough,neighbourhood,coarse,postalcode");
     }
 
     @Test
