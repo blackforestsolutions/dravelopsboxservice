@@ -43,7 +43,7 @@ public class PeliasHttpCallBuilderServiceImpl implements PeliasHttpCallBuilderSe
                 .concat("&")
                 .concat(LANGUAGE_PARAM)
                 .concat("=")
-                .concat(apiToken.getLanguage().toLanguageTag())
+                .concat(apiToken.getLanguage().getLanguage())
                 .concat("&")
                 .concat(BOUNDARY_BOX_MIN_LONGITUDE_PARAM)
                 .concat("=")
