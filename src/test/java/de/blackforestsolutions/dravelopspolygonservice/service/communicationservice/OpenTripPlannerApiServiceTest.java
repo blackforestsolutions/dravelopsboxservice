@@ -16,11 +16,8 @@ import reactor.test.StepVerifier;
 
 import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.ApiTokenObjectMother.getOpenTripPlannerApiToken;
 import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.BoxObjectMother.getVrsBox;
-import static de.blackforestsolutions.dravelopsdatamodel.testutil.TestUtils.getResourceFileAsString;
 import static de.blackforestsolutions.dravelopsdatamodel.testutil.TestUtils.retrieveJsonToPojo;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 class OpenTripPlannerApiServiceTest {
@@ -64,7 +61,7 @@ class OpenTripPlannerApiServiceTest {
         inOrder.verify(openTripPlannerHttpCallBuilderService, times(1)).buildOpenTripPlannerPolygonPathWith(apiTokenArg.capture());
         inOrder.verify(callService, times(1)).getOne(urlArg.capture(), httpHeadersArg.capture(), eq(OpenTripPlannerPolygonResponse.class));
         inOrder.verifyNoMoreInteractions();
-        assertThat(apiTokenArg.getValue()).isEqualToComparingFieldByField(getOpenTripPlannerApiToken());
+        assertThat(apiTokenArg.getValue()).isEqualToComparingFieldByFieldRecursively(getOpenTripPlannerApiToken());
         assertThat(urlArg.getValue()).isEqualTo("http://localhost:8089");
         assertThat(httpHeadersArg.getValue()).isEqualTo(HttpHeaders.EMPTY);
     }

@@ -9,7 +9,6 @@ import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
 import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.TravelPointObjectMother.*;
-import static de.blackforestsolutions.dravelopsdatamodel.testutil.TestUtils.getResourceFileAsString;
 import static de.blackforestsolutions.dravelopsdatamodel.testutil.TestUtils.retrieveJsonToPojo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,32 +27,32 @@ class PeliasMapperServiceTest {
                 .assertNext(travelPoint -> {
                     assertThat(travelPoint.getStatus()).isEqualTo(Status.SUCCESS);
                     assertThat(travelPoint.getThrowable()).isNull();
-                    assertThat(travelPoint.getCalledObject()).isEqualToComparingFieldByField(getStuttgarterStreetOneTravelPoint());
+                    assertThat(travelPoint.getCalledObject()).isEqualToComparingFieldByFieldRecursively(getStuttgarterStreetOneTravelPoint());
                 })
                 .assertNext(travelPoint -> {
                     assertThat(travelPoint.getStatus()).isEqualTo(Status.SUCCESS);
                     assertThat(travelPoint.getThrowable()).isNull();
-                    assertThat(travelPoint.getCalledObject()).isEqualToComparingFieldByField(getGermanyTravelPoint());
+                    assertThat(travelPoint.getCalledObject()).isEqualToComparingFieldByFieldRecursively(getGermanyTravelPoint());
                 })
                 .assertNext(travelPoint -> {
                     assertThat(travelPoint.getStatus()).isEqualTo(Status.SUCCESS);
                     assertThat(travelPoint.getThrowable()).isNull();
-                    assertThat(travelPoint.getCalledObject()).isEqualToComparingFieldByField(getRendsburgCountyTravelPoint());
+                    assertThat(travelPoint.getCalledObject()).isEqualToComparingFieldByFieldRecursively(getRendsburgCountyTravelPoint());
                 })
                 .assertNext(travelPoint -> {
                     assertThat(travelPoint.getStatus()).isEqualTo(Status.SUCCESS);
                     assertThat(travelPoint.getThrowable()).isNull();
-                    assertThat(travelPoint.getCalledObject()).isEqualToComparingFieldByField(getFurtwangenLocalityTravelPoint());
+                    assertThat(travelPoint.getCalledObject()).isEqualToComparingFieldByFieldRecursively(getFurtwangenLocalityTravelPoint());
                 })
                 .assertNext(travelPoint -> {
                     assertThat(travelPoint.getStatus()).isEqualTo(Status.SUCCESS);
                     assertThat(travelPoint.getThrowable()).isNull();
-                    assertThat(travelPoint.getCalledObject()).isEqualToComparingFieldByField(getAmGrosshaubergTravelPoint());
+                    assertThat(travelPoint.getCalledObject()).isEqualToComparingFieldByFieldRecursively(getAmGrosshaubergTravelPoint());
                 })
                 .assertNext(travelPoint -> {
                     assertThat(travelPoint.getStatus()).isEqualTo(Status.SUCCESS);
                     assertThat(travelPoint.getThrowable()).isNull();
-                    assertThat(travelPoint.getCalledObject()).isEqualToComparingFieldByField(getGermanWatchMuseumTravelPoint());
+                    assertThat(travelPoint.getCalledObject()).isEqualToComparingFieldByFieldRecursively(getGermanWatchMuseumTravelPoint());
                 })
                 .verifyComplete();
     }
