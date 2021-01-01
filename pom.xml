@@ -19,8 +19,8 @@
         <apache.lang-version>2.6</apache.lang-version>
         <lombok.version>1.18.8</lombok.version>
         <jaxws.version>2.3.2</jaxws.version>
-        <blackforestsolutions.dravelopsdatamodel.version>4.0.0</blackforestsolutions.dravelopsdatamodel.version>
-        <blackforestsolutions.dravelopsgeneratedcontent.version>0.3.1</blackforestsolutions.dravelopsgeneratedcontent.version>
+        <blackforestsolutions.dravelopsdatamodel.version>5.0.0-hazelcast</blackforestsolutions.dravelopsdatamodel.version>
+        <blackforestsolutions.dravelopsgeneratedcontent.version>0.3.1-hazelcast</blackforestsolutions.dravelopsgeneratedcontent.version>
         <!-- Maven test Dependencies -->
         <assertj.version>3.9.0</assertj.version>
         <mockito.version>3.2.0</mockito.version>
@@ -53,9 +53,8 @@
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <optional>true</optional>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-geode</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
@@ -72,16 +71,6 @@
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.ws</groupId>
-            <artifactId>jaxws-ri</artifactId>
-            <version>${jaxws.version}</version>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-geode</artifactId>
         </dependency>
         <dependency>
             <groupId>com.github.blackforestsolutions</groupId>
@@ -117,17 +106,6 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>${mockito.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium.core</groupId>
-            <artifactId>selenium-core</artifactId>
-            <version>${selenium.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.sourceforge.htmlunit</groupId>
-            <artifactId>htmlunit</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
