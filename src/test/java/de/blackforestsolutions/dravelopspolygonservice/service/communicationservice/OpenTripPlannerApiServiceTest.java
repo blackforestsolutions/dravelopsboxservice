@@ -1,6 +1,5 @@
 package de.blackforestsolutions.dravelopspolygonservice.service.communicationservice;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
 import de.blackforestsolutions.dravelopsgeneratedcontent.opentripplanner.polygon.OpenTripPlannerPolygonResponse;
 import de.blackforestsolutions.dravelopspolygonservice.service.callbuilderservice.OpenTripPlannerHttpCallBuilderService;
@@ -79,7 +78,7 @@ class OpenTripPlannerApiServiceTest {
     }
 
     @Test
-    void test_extractBoxBy_apiToken_returns_error_when_coordinate_is_null() throws JsonProcessingException {
+    void test_extractBoxBy_apiToken_returns_error_when_coordinate_is_null() {
         ApiToken testData = getOpenTripPlannerApiToken();
         OpenTripPlannerPolygonResponse polygonResponse = retrieveJsonToPojo("json/openTripPlannerPolygonJson.json", OpenTripPlannerPolygonResponse.class);
         polygonResponse.setLowerLeftLatitude(null);
