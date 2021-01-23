@@ -25,8 +25,6 @@ import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.ApiTokenO
 import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.TravelPointObjectMother.getGermanyTravelPoint;
 import static de.blackforestsolutions.dravelopsdatamodel.testutil.TestUtils.retrieveJsonToPojo;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 class PeliasApiServiceTest {
@@ -60,7 +58,7 @@ class PeliasApiServiceTest {
                 .assertNext(travelPoint -> {
                     assertThat(travelPoint.getStatus()).isEqualTo(Status.SUCCESS);
                     assertThat(travelPoint.getThrowable()).isNull();
-                    assertThat(travelPoint.getCalledObject()).isEqualToComparingFieldByField(getGermanyTravelPoint());
+                    assertThat(travelPoint.getCalledObject()).isEqualToComparingFieldByFieldRecursively(getGermanyTravelPoint());
                 })
                 .verifyComplete();
     }

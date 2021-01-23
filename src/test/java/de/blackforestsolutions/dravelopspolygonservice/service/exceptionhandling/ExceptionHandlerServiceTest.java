@@ -10,7 +10,6 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.JourneyObjectMother.getJourneyWithEmptyFields;
-import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.UUIDObjectMother.TEST_UUID_1;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ExceptionHandlerServiceTest {
@@ -31,7 +30,7 @@ public class ExceptionHandlerServiceTest {
 
     @Test
     void test_handleExceptions_with_calledObject_status_as_null_exception_as_null_returns_emptyMono() {
-        CallStatus<Journey> testData = new CallStatus<>(getJourneyWithEmptyFields(TEST_UUID_1), null, null);
+        CallStatus<Journey> testData = new CallStatus<>(getJourneyWithEmptyFields(), null, null);
 
         Mono<Journey> result = classUnderTest.handleExceptions(testData);
 
@@ -42,7 +41,7 @@ public class ExceptionHandlerServiceTest {
 
     @Test
     void test_handleExceptions_with_calledObject_status_as_null_exception_returns_emptyMono() {
-        CallStatus<Journey> testData = new CallStatus<>(getJourneyWithEmptyFields(TEST_UUID_1), null, new Exception());
+        CallStatus<Journey> testData = new CallStatus<>(getJourneyWithEmptyFields(), null, new Exception());
 
         Mono<Journey> result = classUnderTest.handleExceptions(testData);
 
@@ -75,18 +74,18 @@ public class ExceptionHandlerServiceTest {
 
     @Test
     void test_handleExceptions_with_calledObject_status_as_success_exception_as_null_returns_emptyMono() {
-        CallStatus<Journey> testData = new CallStatus<>(getJourneyWithEmptyFields(TEST_UUID_1), Status.SUCCESS, null);
+        CallStatus<Journey> testData = new CallStatus<>(getJourneyWithEmptyFields(), Status.SUCCESS, null);
 
         Mono<Journey> result = classUnderTest.handleExceptions(testData);
 
         StepVerifier.create(result)
-                .assertNext(journey -> assertThat(journey).isEqualToComparingFieldByField(getJourneyWithEmptyFields(TEST_UUID_1)))
+                .assertNext(journey -> assertThat(journey).isEqualToComparingFieldByField(getJourneyWithEmptyFields()))
                 .verifyComplete();
     }
 
     @Test
     void test_handleExceptions_with_calledObject_status_as_success_exception_returns_emptyMono() {
-        CallStatus<Journey> testData = new CallStatus<>(getJourneyWithEmptyFields(TEST_UUID_1), Status.SUCCESS, new Exception());
+        CallStatus<Journey> testData = new CallStatus<>(getJourneyWithEmptyFields(), Status.SUCCESS, new Exception());
 
         Mono<Journey> result = classUnderTest.handleExceptions(testData);
 
@@ -119,7 +118,7 @@ public class ExceptionHandlerServiceTest {
 
     @Test
     void test_handleExceptions_with_calledObject_status_as_failed_exception_as_null_returns_emptyMono() {
-        CallStatus<Journey> testData = new CallStatus<>(getJourneyWithEmptyFields(TEST_UUID_1), Status.FAILED, null);
+        CallStatus<Journey> testData = new CallStatus<>(getJourneyWithEmptyFields(), Status.FAILED, null);
 
         Mono<Journey> result = classUnderTest.handleExceptions(testData);
 
@@ -130,7 +129,7 @@ public class ExceptionHandlerServiceTest {
 
     @Test
     void test_handleExceptions_with_calledObject_status_as_failed_exception_returns_emptyMono() {
-        CallStatus<Journey> testData = new CallStatus<>(getJourneyWithEmptyFields(TEST_UUID_1), Status.FAILED, new Exception());
+        CallStatus<Journey> testData = new CallStatus<>(getJourneyWithEmptyFields(), Status.FAILED, new Exception());
 
         Mono<Journey> result = classUnderTest.handleExceptions(testData);
 

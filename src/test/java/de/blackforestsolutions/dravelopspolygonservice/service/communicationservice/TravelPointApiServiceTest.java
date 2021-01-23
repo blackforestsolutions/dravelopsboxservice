@@ -1,9 +1,9 @@
 package de.blackforestsolutions.dravelopspolygonservice.service.communicationservice;
 
+import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
 import de.blackforestsolutions.dravelopsdatamodel.CallStatus;
 import de.blackforestsolutions.dravelopsdatamodel.Status;
 import de.blackforestsolutions.dravelopsdatamodel.TravelPoint;
-import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
 import de.blackforestsolutions.dravelopspolygonservice.exceptionhandling.ExceptionHandlerService;
 import de.blackforestsolutions.dravelopspolygonservice.exceptionhandling.ExceptionHandlerServiceImpl;
 import de.blackforestsolutions.dravelopspolygonservice.service.supportservice.RequestTokenHandlerService;
@@ -16,9 +16,7 @@ import reactor.test.StepVerifier;
 
 import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.ApiTokenObjectMother.*;
 import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.TravelPointObjectMother.getGermanyTravelPoint;
-import static de.blackforestsolutions.dravelopsdatamodel.testutil.TestUtils.toJson;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class TravelPointApiServiceTest {
@@ -48,7 +46,7 @@ class TravelPointApiServiceTest {
         Flux<TravelPoint> result = classUnderTest.retrieveTravelPointsFromApiService(testData);
 
         StepVerifier.create(result)
-                .assertNext(travelPoint -> assertThat(toJson(travelPoint)).isEqualTo(toJson(getGermanyTravelPoint())))
+                .assertNext(travelPoint -> assertThat(travelPoint).isEqualToComparingFieldByFieldRecursively(getGermanyTravelPoint()))
                 .verifyComplete();
     }
 

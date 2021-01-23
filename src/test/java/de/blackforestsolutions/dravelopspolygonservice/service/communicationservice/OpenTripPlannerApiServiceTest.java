@@ -1,6 +1,5 @@
 package de.blackforestsolutions.dravelopspolygonservice.service.communicationservice;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
 import de.blackforestsolutions.dravelopsgeneratedcontent.opentripplanner.polygon.OpenTripPlannerPolygonResponse;
 import de.blackforestsolutions.dravelopspolygonservice.service.callbuilderservice.OpenTripPlannerHttpCallBuilderService;
@@ -16,11 +15,8 @@ import reactor.test.StepVerifier;
 
 import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.ApiTokenObjectMother.getOpenTripPlannerApiToken;
 import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.BoxObjectMother.getVrsBox;
-import static de.blackforestsolutions.dravelopsdatamodel.testutil.TestUtils.getResourceFileAsString;
 import static de.blackforestsolutions.dravelopsdatamodel.testutil.TestUtils.retrieveJsonToPojo;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 class OpenTripPlannerApiServiceTest {
@@ -64,7 +60,7 @@ class OpenTripPlannerApiServiceTest {
         inOrder.verify(openTripPlannerHttpCallBuilderService, times(1)).buildOpenTripPlannerPolygonPathWith(apiTokenArg.capture());
         inOrder.verify(callService, times(1)).getOne(urlArg.capture(), httpHeadersArg.capture(), eq(OpenTripPlannerPolygonResponse.class));
         inOrder.verifyNoMoreInteractions();
-        assertThat(apiTokenArg.getValue()).isEqualToComparingFieldByField(getOpenTripPlannerApiToken());
+        assertThat(apiTokenArg.getValue()).isEqualToComparingFieldByFieldRecursively(getOpenTripPlannerApiToken());
         assertThat(urlArg.getValue()).isEqualTo("http://localhost:8089");
         assertThat(httpHeadersArg.getValue()).isEqualTo(HttpHeaders.EMPTY);
     }
@@ -82,7 +78,7 @@ class OpenTripPlannerApiServiceTest {
     }
 
     @Test
-    void test_extractBoxBy_apiToken_returns_error_when_coordinate_is_null() throws JsonProcessingException {
+    void test_extractBoxBy_apiToken_returns_error_when_coordinate_is_null() {
         ApiToken testData = getOpenTripPlannerApiToken();
         OpenTripPlannerPolygonResponse polygonResponse = retrieveJsonToPojo("json/openTripPlannerPolygonJson.json", OpenTripPlannerPolygonResponse.class);
         polygonResponse.setLowerLeftLatitude(null);
