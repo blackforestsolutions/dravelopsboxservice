@@ -44,4 +44,23 @@ public class PeliasCallServiceIT {
                 })
                 .verifyComplete();
     }
+
+    @Test
+    void test_travelPoints_returns_no_result_with_unknown_search_text() {
+        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(peliasAutocompleteApiToken.build());
+        testData.setDeparture("Noooooooooooooo expected Result");
+        testData.setPath(peliasHttpCallBuilderService.buildPeliasAutocompletePathWith(testData.build()));
+
+        Mono<PeliasTravelPointResponse> result = callService.getOne(buildUrlWith(testData.build()).toString(), HttpHeaders.EMPTY, PeliasTravelPointResponse.class);
+
+        StepVerifier.create(result)
+                .assertNext(peliasTravelPointResponse -> {
+                    assertThat(peliasTravelPointResponse.getGeocoding().getQuery().getLang().getIso6391()).isEqualTo(testData.getLanguage().getLanguage());
+                    assertThat(peliasTravelPointResponse.getFeatures().size()).isEqualTo(0);
+                    assertThat(peliasTravelPointResponse.getFeatures().size()).isLessThanOrEqualTo(testData.getMaxResults());
+                })
+                .verifyComplete();
+    }
+
+
 }
