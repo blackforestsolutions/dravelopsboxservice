@@ -1,14 +1,14 @@
 package de.blackforestsolutions.dravelopspolygonservice.service.communicationservice;
 
+import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
 import de.blackforestsolutions.dravelopsdatamodel.CallStatus;
 import de.blackforestsolutions.dravelopsdatamodel.Status;
 import de.blackforestsolutions.dravelopsdatamodel.TravelPoint;
-import de.blackforestsolutions.dravelopsdatamodel.exception.NoExternalResultFoundException;
-import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
 import de.blackforestsolutions.dravelopsgeneratedcontent.pelias.PeliasTravelPointResponse;
 import de.blackforestsolutions.dravelopspolygonservice.service.callbuilderservice.PeliasHttpCallBuilderService;
 import de.blackforestsolutions.dravelopspolygonservice.service.communicationservice.restcalls.CallService;
 import de.blackforestsolutions.dravelopspolygonservice.service.mapperservice.PeliasMapperService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -16,9 +16,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.net.URL;
+import java.util.Optional;
 
 import static de.blackforestsolutions.dravelopsdatamodel.util.DravelOpsHttpCallBuilder.buildUrlWith;
 
+@Slf4j
 @Service
 public class PeliasApiServiceImpl implements PeliasApiService {
 
@@ -61,7 +63,9 @@ public class PeliasApiServiceImpl implements PeliasApiService {
 
     private Mono<PeliasTravelPointResponse> handleEmptyResponse(PeliasTravelPointResponse response) {
         if (response.getFeatures().size() == 0) {
-            return Mono.error(new NoExternalResultFoundException());
+            Optional<String> optionalSearchText = Optional.ofNullable(response.getGeocoding().getQuery().getText());
+            optionalSearchText.ifPresent(searchText -> log.info("No result found in pelias for searchText: ".concat(searchText)));
+            return Mono.empty();
         }
         return Mono.just(response);
     }

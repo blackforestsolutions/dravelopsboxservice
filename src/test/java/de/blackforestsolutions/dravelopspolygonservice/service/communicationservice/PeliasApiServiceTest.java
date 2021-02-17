@@ -3,7 +3,6 @@ package de.blackforestsolutions.dravelopspolygonservice.service.communicationser
 import de.blackforestsolutions.dravelopsdatamodel.CallStatus;
 import de.blackforestsolutions.dravelopsdatamodel.Status;
 import de.blackforestsolutions.dravelopsdatamodel.TravelPoint;
-import de.blackforestsolutions.dravelopsdatamodel.exception.NoExternalResultFoundException;
 import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
 import de.blackforestsolutions.dravelopsgeneratedcontent.pelias.PeliasTravelPointResponse;
 import de.blackforestsolutions.dravelopspolygonservice.service.callbuilderservice.PeliasHttpCallBuilderService;
@@ -132,7 +131,7 @@ class PeliasApiServiceTest {
     }
 
     @Test
-    void test_extractTravelPointsFrom_apiToken_and_no_result_json_returns_failed_call_status_with_noExternalResultFoundException() {
+    void test_extractTravelPointsFrom_apiToken_and_no_result_json_returns_no_results() {
         ApiToken testData = getPeliasAutocompleteApiToken();
         PeliasTravelPointResponse testResult = retrieveJsonToPojo("json/peliasNoResult.json", PeliasTravelPointResponse.class);
         when(callService.getOne(anyString(), any(HttpHeaders.class), eq(PeliasTravelPointResponse.class)))
@@ -141,11 +140,7 @@ class PeliasApiServiceTest {
         Flux<CallStatus<TravelPoint>> result = classUnderTest.extractTravelPointsFrom(testData);
 
         StepVerifier.create(result)
-                .assertNext(error -> {
-                    assertThat(error.getStatus()).isEqualTo(Status.FAILED);
-                    assertThat(error.getCalledObject()).isNull();
-                    assertThat(error.getThrowable()).isInstanceOf(NoExternalResultFoundException.class);
-                })
+                .expectNextCount(0L)
                 .verifyComplete();
     }
 
