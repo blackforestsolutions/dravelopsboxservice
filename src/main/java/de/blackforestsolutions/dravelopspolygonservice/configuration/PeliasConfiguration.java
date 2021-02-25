@@ -23,6 +23,7 @@ public class PeliasConfiguration {
     @Value("${pelias.layers}")
     private String[] layers;
 
+
     @Bean(name = "peliasApiToken")
     public ApiToken apiToken() {
         return new ApiToken.ApiTokenBuilder()

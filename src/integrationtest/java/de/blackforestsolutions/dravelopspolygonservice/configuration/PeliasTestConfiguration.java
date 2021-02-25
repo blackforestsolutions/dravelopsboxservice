@@ -17,6 +17,10 @@ public class PeliasTestConfiguration {
     private String departure;
     @Value("${test.apitokens[0].language}")
     private Locale language;
+    @Value("${test.apitokens[0].arrivalCoordinateLongitude}")
+    private double coordinateLongitude;
+    @Value("${test.apitokens[0].arrivalCoordinateLatitude}")
+    private double coordinateLatitude;
     @Value("${test.apitokens[0].box[0].x}")
     private Double firstDepartureLongitude;
     @Value("${test.apitokens[0].box[0].y}")
@@ -28,10 +32,11 @@ public class PeliasTestConfiguration {
 
     @Bean
     @ConfigurationProperties(prefix = "pelias")
-    public ApiToken.ApiTokenBuilder peliasAutocompleteApiToken() {
+    public ApiToken.ApiTokenBuilder peliasTestApiToken() {
         return new ApiToken.ApiTokenBuilder()
                 .setDeparture(departure)
                 .setLanguage(language)
+                .setArrivalCoordinate(new de.blackforestsolutions.dravelopsdatamodel.Point.PointBuilder(coordinateLongitude, coordinateLatitude).build())
                 .setBox(new Box(
                         new Point(firstDepartureLongitude, firstDepartureLatitude),
                         new Point(secondDepartureLongitude, secondDepartureLatitude)
