@@ -8,6 +8,8 @@ import java.util.Objects;
 @Service
 public class PeliasHttpCallBuilderServiceImpl implements PeliasHttpCallBuilderService {
 
+    private static final int MIN_LAYERS_SIZE = 1;
+
     private static final String AUTOCOMPLETE_PATH = "autocomplete";
 
     private static final String TEXT_PARAM = "text";
@@ -26,8 +28,12 @@ public class PeliasHttpCallBuilderServiceImpl implements PeliasHttpCallBuilderSe
         Objects.requireNonNull(apiToken.getMaxResults(), "maxResults is not allowed to be null");
         Objects.requireNonNull(apiToken.getLanguage(), "language is not allowed to be null");
         Objects.requireNonNull(apiToken.getBox(), "box is not allowed to be null");
+        Objects.requireNonNull(apiToken.getBox().getTopLeft(), "topLeft from box is not allowed to be null");
+        Objects.requireNonNull(apiToken.getBox().getBottomRight(), "bottomRight from box is not allowed to be null");
         Objects.requireNonNull(apiToken.getLayers(), "layers is not allowed to be null");
-        Objects.requireNonNull(apiToken.getLayers().get(0), "first layer element is not allowed to be null");
+        if (apiToken.getLayers().size() < MIN_LAYERS_SIZE) {
+            throw new NullPointerException();
+        }
         return "/"
                 .concat(apiToken.getApiVersion())
                 .concat("/")
@@ -47,19 +53,19 @@ public class PeliasHttpCallBuilderServiceImpl implements PeliasHttpCallBuilderSe
                 .concat("&")
                 .concat(BOUNDARY_BOX_MIN_LONGITUDE_PARAM)
                 .concat("=")
-                .concat(String.valueOf(apiToken.getBox().getFirst().getX()))
+                .concat(String.valueOf(apiToken.getBox().getTopLeft().getX()))
                 .concat("&")
                 .concat(BOUNDARY_BOX_MAX_LONGITUDE_PARAM)
                 .concat("=")
-                .concat(String.valueOf(apiToken.getBox().getSecond().getX()))
+                .concat(String.valueOf(apiToken.getBox().getBottomRight().getX()))
                 .concat("&")
                 .concat(BOUNDARY_BOX_MIN_LATITUDE_PARAM)
                 .concat("=")
-                .concat(String.valueOf(apiToken.getBox().getFirst().getY()))
+                .concat(String.valueOf(apiToken.getBox().getBottomRight().getY()))
                 .concat("&")
                 .concat(BOUNDARY_BOX_MAX_LATITUDE_PARAM)
                 .concat("=")
-                .concat(String.valueOf(apiToken.getBox().getSecond().getY()))
+                .concat(String.valueOf(apiToken.getBox().getTopLeft().getY()))
                 .concat("&")
                 .concat(LAYERS_PARAM)
                 .concat("=")

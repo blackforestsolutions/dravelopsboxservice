@@ -77,7 +77,7 @@ class PeliasApiServiceTest {
         inOrder.verify(callService, times(1)).getOne(urlArg.capture(), httpHeadersArg.capture(), eq(PeliasTravelPointResponse.class));
         inOrder.verify(peliasMapperService, times(1)).extractTravelPointsFrom(responseArg.capture());
         inOrder.verifyNoMoreInteractions();
-        assertThat(apiTokenArg.getValue()).isEqualToComparingFieldByField(getPeliasAutocompleteApiToken());
+        assertThat(apiTokenArg.getValue()).isEqualToComparingFieldByFieldRecursively(getPeliasAutocompleteApiToken());
         assertThat(urlArg.getValue()).isEqualTo("http://localhost:4000");
         assertThat(httpHeadersArg.getValue()).isEqualTo(HttpHeaders.EMPTY);
         assertThat(responseArg.getValue()).isInstanceOf(PeliasTravelPointResponse.class);

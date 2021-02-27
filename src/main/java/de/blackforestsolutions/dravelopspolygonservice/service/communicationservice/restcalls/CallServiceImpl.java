@@ -2,6 +2,7 @@ package de.blackforestsolutions.dravelopspolygonservice.service.communicationser
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -24,5 +25,17 @@ public class CallServiceImpl implements CallService {
                 .headers(headers -> httpHeaders.forEach(headers::addAll))
                 .retrieve()
                 .bodyToMono(returnType);
+    }
+
+    @Override
+    public <T> Mono<T> getOneReactive(String url, HttpHeaders httpHeaders, Class<T> returnType) {
+        return webClient
+                .get()
+                .uri(url)
+                .headers(headers -> httpHeaders.forEach(headers::addAll))
+                .accept(MediaType.TEXT_EVENT_STREAM)
+                .retrieve()
+                .bodyToFlux(returnType)
+                .next();
     }
 }

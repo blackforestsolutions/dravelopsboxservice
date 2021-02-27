@@ -19,6 +19,12 @@ public class ExceptionHandlerServiceImpl implements ExceptionHandlerService {
     }
 
     @Override
+    public <T> Mono<T> handleException(Throwable exception) {
+        logError(exception);
+        return Mono.error(exception);
+    }
+
+    @Override
     public <T> Mono<T> handleExceptions(CallStatus<T> callStatus) {
         if (Optional.ofNullable(callStatus.getThrowable()).isPresent()) {
             logError(callStatus);

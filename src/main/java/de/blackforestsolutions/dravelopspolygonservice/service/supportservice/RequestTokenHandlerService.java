@@ -6,6 +6,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 public interface RequestTokenHandlerService {
     ApiToken getRequestApiTokenWith(ApiToken request, ApiToken configuredPeliasApiToken);
 
-    @Scheduled(cron = "${otp.polygonupdatetime}")
-    void updateOpenTripPlannerBox();
+    @Scheduled(cron = "${stationpersistence.box.updatetime}")
+    void updateStationPersistenceBox();
 }

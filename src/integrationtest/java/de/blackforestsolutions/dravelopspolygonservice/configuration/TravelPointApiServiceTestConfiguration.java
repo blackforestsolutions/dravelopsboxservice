@@ -10,7 +10,7 @@ public class TravelPointApiServiceTestConfiguration {
 
     @Bean
     @ConfigurationProperties(prefix = "test.apitokens[0]")
-    public ApiToken.ApiTokenBuilder polygonApiToken() {
+    public ApiToken.ApiTokenBuilder boxApiToken() {
         return new ApiToken.ApiTokenBuilder();
     }
 }

@@ -67,7 +67,7 @@ class TravelPointApiServiceTest {
         inOrder.verifyNoMoreInteractions();
         assertThat(polygonTokenArg.getValue()).isEqualToComparingFieldByField(getPolygonApiToken());
         assertThat(configuredTokenArg.getValue()).isEqualToComparingFieldByField(getConfiguredPeliasAutocompleteApiToken());
-        assertThat(mergedTokenArg.getValue()).isEqualToComparingFieldByField(getPeliasAutocompleteApiToken());
+        assertThat(mergedTokenArg.getValue()).isEqualToComparingFieldByFieldRecursively(getPeliasAutocompleteApiToken());
         assertThat(callStatusArg.getAllValues().size()).isEqualTo(2);
         assertThat(callStatusArg.getAllValues().get(0).getStatus()).isEqualTo(Status.SUCCESS);
         assertThat(callStatusArg.getAllValues().get(0).getThrowable()).isNull();

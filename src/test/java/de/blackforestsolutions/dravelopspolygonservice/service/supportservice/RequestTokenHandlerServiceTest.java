@@ -1,13 +1,13 @@
 package de.blackforestsolutions.dravelopspolygonservice.service.supportservice;
 
 import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
-import de.blackforestsolutions.dravelopspolygonservice.service.communicationservice.OpenTripPlannerApiService;
+import de.blackforestsolutions.dravelopsdatamodel.Box;
+import de.blackforestsolutions.dravelopspolygonservice.service.communicationservice.BackendApiService;
+import de.blackforestsolutions.dravelopspolygonservice.service.communicationservice.BackendApiServiceImpl;
 import org.awaitility.Awaitility;
-import org.awaitility.Duration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-import org.springframework.data.geo.Box;
 import org.springframework.scheduling.TriggerContext;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -17,23 +17,26 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.ApiTokenObjectMother.*;
-import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.BoxObjectMother.getOpenTripPlannerBox;
-import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.BoxObjectMother.getOpenTripPlannerStartBox;
+import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.BoxObjectMother.getBoxServiceStartBox;
+import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.BoxObjectMother.getStationPersistenceBox;
 import static de.blackforestsolutions.dravelopsdatamodel.testutil.TestUtils.getPropertyFromFileAsString;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 class RequestTokenHandlerServiceTest {
 
-    private final Box openTripPlannerBox = getOpenTripPlannerStartBox();
-    private final ApiToken openTripPlannerApiToken = getOpenTripPlannerApiToken();
-    private final OpenTripPlannerApiService openTripPlannerApiService = mock(OpenTripPlannerApiService.class);
+    private static final long ASYNC_DELAY = 1L;
 
-    private final RequestTokenHandlerService classUnderTest = new RequestTokenHandlerServiceImpl(openTripPlannerBox, openTripPlannerApiToken, openTripPlannerApiService);
+    private final Box stationPersistenceBox = getBoxServiceStartBox();
+    private final ApiToken configuredBoxPersistenceApiToken = getConfiguredBoxPersistenceApiToken();
+    private final BackendApiService backendApiService = mock(BackendApiServiceImpl.class);
+
+    private final RequestTokenHandlerService classUnderTest = new RequestTokenHandlerServiceImpl(stationPersistenceBox, configuredBoxPersistenceApiToken, backendApiService);
 
 
     @Test
@@ -42,7 +45,7 @@ class RequestTokenHandlerServiceTest {
         // Locale.US as github workflow is apparently not executed in germany
         SimpleDateFormat formatter = new SimpleDateFormat("EE MMM dd HH:mm:ss zzzz yyyy", Locale.US);
         Date lastExecutionTestDate = formatter.parse("Mon Aug 30 00:00:00 CEST 2020");
-        String cron = getPropertyFromFileAsString("application-dev.properties", "otp.polygonupdatetime");
+        String cron = getPropertyFromFileAsString("application-dev.properties", "stationpersistence.box.updatetime");
 
         CronTrigger cronUnderTest = new CronTrigger(cron);
         Date result = cronUnderTest.nextExecutionTime(new TriggerContext() {
@@ -66,44 +69,80 @@ class RequestTokenHandlerServiceTest {
     }
 
     @Test
-    void test_updateOpenTripPlannerBox_updates_polygon_within_service() {
-        when(openTripPlannerApiService.extractBoxBy(any(ApiToken.class)))
-                .thenReturn(Mono.just(getOpenTripPlannerBox()));
+    void test_updateStationPersistenceBox_updates_box_within_service() {
+        when(backendApiService.getOneBy(any(ApiToken.class), eq(Box.class)))
+                .thenReturn(Mono.just(getStationPersistenceBox()));
 
-        classUnderTest.updateOpenTripPlannerBox();
-
-        Awaitility.await()
-                .atMost(Duration.ONE_SECOND)
-                .untilAsserted(() -> {
-                    Box openTripPlannerBox = (Box) ReflectionTestUtils.getField(classUnderTest, "openTripPlannerBox");
-                    assertThat(openTripPlannerBox).isEqualTo(getOpenTripPlannerBox());
-                });
-    }
-
-
-    @Test
-    void test_updateOpenTripPlannerBox_updates_not_polygon_when_error_is_thrown() {
-        when(openTripPlannerApiService.extractBoxBy(any(ApiToken.class)))
-                .thenReturn(Mono.error(new NullPointerException()));
-
-        classUnderTest.updateOpenTripPlannerBox();
+        classUnderTest.updateStationPersistenceBox();
 
         Awaitility.await()
-                .atMost(Duration.ONE_SECOND)
                 .untilAsserted(() -> {
-                    Box openTripPlannerBox = (Box) ReflectionTestUtils.getField(classUnderTest, "openTripPlannerBox");
-                    assertThat(openTripPlannerBox).isEqualTo(getOpenTripPlannerStartBox());
+                    Box stationPersistenceBox = (Box) ReflectionTestUtils.getField(classUnderTest, "stationPersistenceBox");
+                    assertThat(stationPersistenceBox).isEqualToComparingFieldByFieldRecursively(getStationPersistenceBox());
                 });
     }
 
     @Test
-    void test_getRequestApiTokenWith_polygonToken_and_configuredPeliasApiToken_returns_merged_token_for_autocompleteCall() {
-        ApiToken polygonTokenTestData = getPolygonApiToken();
+    void test_updateStationPersistenceBox_updates_not_box_when_error_is_thrown() {
+        when(backendApiService.getOneBy(any(ApiToken.class), eq(Box.class)))
+                .thenReturn(Mono.error(new Exception()))
+                .thenReturn(Mono.just(getStationPersistenceBox()));
+
+        classUnderTest.updateStationPersistenceBox();
+
+        Awaitility.await()
+                .atMost(configuredBoxPersistenceApiToken.getRetryTimeInSeconds() + ASYNC_DELAY, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    Box stationPersistenceBox = (Box) ReflectionTestUtils.getField(classUnderTest, "stationPersistenceBox");
+                    assertThat(stationPersistenceBox).isEqualToComparingFieldByFieldRecursively(getStationPersistenceBox());
+                    verify(backendApiService, times(2)).getOneBy(any(ApiToken.class), eq(Box.class));
+                });
+    }
+
+    @Test
+    void test_updateStationPersistenceBox_updates_not_box_when_empty_result_is_given_back() {
+        when(backendApiService.getOneBy(any(ApiToken.class), eq(Box.class)))
+                .thenReturn(Mono.empty())
+                .thenReturn(Mono.just(getStationPersistenceBox()));
+
+        classUnderTest.updateStationPersistenceBox();
+
+        Awaitility.await()
+                .atMost(configuredBoxPersistenceApiToken.getRetryTimeInSeconds() + ASYNC_DELAY, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    Box stationPersistenceBox = (Box) ReflectionTestUtils.getField(classUnderTest, "stationPersistenceBox");
+                    assertThat(stationPersistenceBox).isEqualToComparingFieldByFieldRecursively(getStationPersistenceBox());
+                    verify(backendApiService, times(2)).getOneBy(any(ApiToken.class), eq(Box.class));
+                });
+    }
+
+    @Test
+    void test_updateStationPersistenceBox_updates_box_after_three_and_one_right_backend_result() {
+        when(backendApiService.getOneBy(any(ApiToken.class), eq(Box.class)))
+                .thenReturn(Mono.error(new Exception()))
+                .thenReturn(Mono.empty())
+                .thenReturn(Mono.error(new Exception()))
+                .thenReturn(Mono.just(getStationPersistenceBox()));
+
+        classUnderTest.updateStationPersistenceBox();
+
+        Awaitility.await()
+                .atMost(configuredBoxPersistenceApiToken.getRetryTimeInSeconds() * 3 + ASYNC_DELAY, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    Box stationPersistenceBox = (Box) ReflectionTestUtils.getField(classUnderTest, "stationPersistenceBox");
+                    assertThat(stationPersistenceBox).isEqualToComparingFieldByFieldRecursively(getStationPersistenceBox());
+                    verify(backendApiService, times(4)).getOneBy(any(ApiToken.class), eq(Box.class));
+                });
+    }
+
+    @Test
+    void test_getRequestApiTokenWith_boxToken_and_configuredPeliasApiToken_returns_merged_token_for_autocompleteCall() {
+        ApiToken boxTokenTestData = getPolygonApiToken();
         ApiToken configuredPeliasTestData = getConfiguredPeliasAutocompleteApiToken();
 
-        ApiToken result = classUnderTest.getRequestApiTokenWith(polygonTokenTestData, configuredPeliasTestData);
+        ApiToken result = classUnderTest.getRequestApiTokenWith(boxTokenTestData, configuredPeliasTestData);
 
         assertThat(result).isEqualToIgnoringGivenFields(getPeliasAutocompleteApiToken(), "box");
-        assertThat(result.getBox()).isEqualTo(getOpenTripPlannerStartBox());
+        assertThat(result.getBox()).isEqualToComparingFieldByFieldRecursively(getBoxServiceStartBox());
     }
 }

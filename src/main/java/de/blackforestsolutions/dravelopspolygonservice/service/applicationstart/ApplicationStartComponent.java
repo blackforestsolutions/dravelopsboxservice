@@ -18,6 +18,6 @@ public class ApplicationStartComponent implements ApplicationListener<Applicatio
 
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent event) {
-        requestTokenHandlerService.updateOpenTripPlannerBox();
+        requestTokenHandlerService.updateStationPersistenceBox();
     }
 }
