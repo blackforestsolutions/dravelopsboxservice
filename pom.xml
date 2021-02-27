@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.springframework</groupId>
-    <artifactId>dravelopspolygonservice</artifactId>
+    <artifactId>dravelopsboxservice</artifactId>
     <version>0.0.0</version>
 
     <parent>
@@ -20,7 +20,7 @@
         <lombok.version>1.18.8</lombok.version>
         <jaxws.version>2.3.2</jaxws.version>
         <reactor.version>3.3.4.RELEASE</reactor.version>
-        <blackforestsolutions.dravelopsdatamodel.version>6.6.1</blackforestsolutions.dravelopsdatamodel.version>
+        <blackforestsolutions.dravelopsdatamodel.version>7.0.1</blackforestsolutions.dravelopsdatamodel.version>
         <blackforestsolutions.dravelopsgeneratedcontent.version>1.0.0</blackforestsolutions.dravelopsgeneratedcontent.version>
         <!-- Maven test Dependencies -->
         <assertj.version>3.9.0</assertj.version>
@@ -228,8 +228,8 @@
                         <configuration>
                             <excludes>
                                 <!-- configuration exclude -->
-                                <exclude>**/*de/blackforestsolutions/dravelopspolygonservice/configuration/*</exclude>
-                                <exclude>**/*de/blackforestsolutions/dravelopspolygonservice/Application.class</exclude>
+                                <exclude>**/*de/blackforestsolutions/dravelopsboxservice/configuration/*</exclude>
+                                <exclude>**/*de/blackforestsolutions/dravelopsboxservice/Application.class</exclude>
                             </excludes>
                             <rules>
                                 <rule>
