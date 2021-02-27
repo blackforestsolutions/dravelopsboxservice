@@ -119,7 +119,7 @@ class RequestTokenHandlerServiceTest {
     @Test
     void test_updateStationPersistenceBox_updates_box_after_three_and_one_right_backend_result() {
         when(backendApiService.getOneBy(any(ApiToken.class), eq(Box.class)))
-                .thenReturn(Mono.error(new Exception()))
+                .thenReturn(Mono.empty())
                 .thenReturn(Mono.empty())
                 .thenReturn(Mono.error(new Exception()))
                 .thenReturn(Mono.just(getStationPersistenceBox()));

@@ -1,10 +1,11 @@
 package de.blackforestsolutions.dravelopsboxservice.exceptionhandling;
 
 import de.blackforestsolutions.dravelopsdatamodel.CallStatus;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ExceptionHandlerService {
-    <T> Mono<T> handleExceptions(Throwable exception);
+    <T> Flux<T> handleExceptions(Throwable exception);
 
     <T> Mono<T> handleException(Throwable exception);
 

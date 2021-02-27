@@ -79,8 +79,8 @@ class BackendApiServiceTest {
         Mono<Box> result = classUnderTest.getOneBy(configuredTestToken.build(), Box.class);
 
         StepVerifier.create(result)
-                .expectError(NullPointerException.class)
-                .verify();
+                .expectNextCount(0L)
+                .verifyComplete();
         verify(exceptionHandlerService, times(1)).handleException(exceptionArg.capture());
         assertThat(exceptionArg.getValue()).isInstanceOf(NullPointerException.class);
     }
@@ -91,8 +91,8 @@ class BackendApiServiceTest {
         Mono<Box> result = classUnderTest.getOneBy(null, null);
 
         StepVerifier.create(result)
-                .expectError(NullPointerException.class)
-                .verify();
+                .expectNextCount(0L)
+                .verifyComplete();
     }
 
     @Test
@@ -104,7 +104,7 @@ class BackendApiServiceTest {
         Mono<Box> result = classUnderTest.getOneBy(configuredTestToken, Box.class);
 
         StepVerifier.create(result)
-                .expectError(Exception.class)
-                .verify();
+                .expectNextCount(0L)
+                .verifyComplete();
     }
 }
