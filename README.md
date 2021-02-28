@@ -1,4 +1,4 @@
-<h1 align="center">dravelopspolygonservice</h1>
+<h1 align="center">dravelopsboxservice</h1>
 
 #### Setup
 1. Put [settings.xml](https://github.com/blackforestsolutions/dravelopsdocumentation/tree/master/InstallationFiles) to your .m2 folder
