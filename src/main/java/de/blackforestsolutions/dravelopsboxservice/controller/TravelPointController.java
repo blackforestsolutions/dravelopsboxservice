@@ -1,8 +1,8 @@
 package de.blackforestsolutions.dravelopsboxservice.controller;
 
-import de.blackforestsolutions.dravelopsdatamodel.TravelPoint;
-import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
 import de.blackforestsolutions.dravelopsboxservice.service.communicationservice.TravelPointApiService;
+import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
+import de.blackforestsolutions.dravelopsdatamodel.TravelPoint;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -13,7 +13,7 @@ import reactor.core.publisher.Flux;
 
 @Slf4j
 @RestController
-@RequestMapping("pelias/travelpoints")
+@RequestMapping("/travelpoints")
 public class TravelPointController {
 
     private final TravelPointApiService travelPointApiService;
@@ -23,8 +23,13 @@ public class TravelPointController {
         this.travelPointApiService = travelPointApiService;
     }
 
-    @RequestMapping(value = "/get", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<TravelPoint> retrievePeliasTravelPoints(@RequestBody ApiToken request) {
-        return travelPointApiService.retrieveTravelPointsFromApiService(request);
+    @RequestMapping(value = "/autocomplete", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<TravelPoint> getAutocompleteAddresses(@RequestBody ApiToken request) {
+        return travelPointApiService.retrieveAutocompleteAddressesFromApiService(request);
+    }
+
+    @RequestMapping(value = "/nearest", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<TravelPoint> getNearestAddresses(@RequestBody ApiToken request) {
+        return travelPointApiService.retrieveNearestAddressesFromApiService(request);
     }
 }

@@ -1,13 +1,13 @@
 package de.blackforestsolutions.dravelopsboxservice.service.communicationservice;
 
+import de.blackforestsolutions.dravelopsboxservice.service.callbuilderservice.PeliasHttpCallBuilderService;
+import de.blackforestsolutions.dravelopsboxservice.service.communicationservice.restcalls.CallService;
+import de.blackforestsolutions.dravelopsboxservice.service.mapperservice.PeliasMapperService;
 import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
 import de.blackforestsolutions.dravelopsdatamodel.CallStatus;
 import de.blackforestsolutions.dravelopsdatamodel.Status;
 import de.blackforestsolutions.dravelopsdatamodel.TravelPoint;
 import de.blackforestsolutions.dravelopsgeneratedcontent.pelias.PeliasTravelPointResponse;
-import de.blackforestsolutions.dravelopsboxservice.service.callbuilderservice.PeliasHttpCallBuilderService;
-import de.blackforestsolutions.dravelopsboxservice.service.communicationservice.restcalls.CallService;
-import de.blackforestsolutions.dravelopsboxservice.service.mapperservice.PeliasMapperService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +16,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.net.URL;
+import java.util.Comparator;
 import java.util.Optional;
 
 import static de.blackforestsolutions.dravelopsdatamodel.util.DravelOpsHttpCallBuilder.buildUrlWith;
@@ -23,6 +24,8 @@ import static de.blackforestsolutions.dravelopsdatamodel.util.DravelOpsHttpCallB
 @Slf4j
 @Service
 public class PeliasApiServiceImpl implements PeliasApiService {
+
+    private static final int EMPTY_RESPONSE_SIZE = 0;
 
     private final PeliasHttpCallBuilderService peliasHttpCallBuilderService;
     private final PeliasMapperService peliasMapperService;
@@ -36,7 +39,7 @@ public class PeliasApiServiceImpl implements PeliasApiService {
     }
 
     @Override
-    public Flux<CallStatus<TravelPoint>> extractTravelPointsFrom(ApiToken apiToken) {
+    public Flux<CallStatus<TravelPoint>> getAutocompleteAddressesFrom(ApiToken apiToken) {
         try {
             return executeAutocompleteCallWith(apiToken)
                     .onErrorResume(error -> Mono.just(new CallStatus<>(null, Status.FAILED, error)));
@@ -46,19 +49,15 @@ public class PeliasApiServiceImpl implements PeliasApiService {
 
     }
 
-    public Mono<CallStatus<TravelPoint>> extractTravelPointFrom(ApiToken apiToken) {
-//        try {
-//            return executeAutocompleteCallWith(apiToken)
-//                    .doOnNext(response -> response.getFeatures().sort(Comparator.comparing(feature -> feature.getProperties().getConfidence()).reversed()))
-//                    .flatMapMany(peliasMapperService::extractTravelPointsFrom)
-//                    .onErrorResume(error -> Mono.just(new CallStatus<>(null, Status.FAILED, error)))
-//                    .take(1);
-//        } catch (Exception e) {
-//            return Mono.just(new CallStatus<>(null, Status.FAILED, e));
-//        }
+    @Override
+    public Flux<CallStatus<TravelPoint>> getNearestAddressesFrom(ApiToken apiToken) {
+        try {
+            return executeReverseCallWith(apiToken)
+                    .onErrorResume(error -> Mono.just(new CallStatus<>(null, Status.FAILED, error)));
+        } catch (Exception e) {
+            return Flux.just(new CallStatus<>(null, Status.FAILED, e));
+        }
     }
-
-//    private Mono<PeliasTravelPointResponse> ex
 
     private Flux<CallStatus<TravelPoint>> executeAutocompleteCallWith(ApiToken apiToken) {
         return Mono.just(apiToken)
@@ -72,7 +71,8 @@ public class PeliasApiServiceImpl implements PeliasApiService {
         return Mono.just(apiToken)
                 .map(this::getReverseRequestString)
                 .flatMap(url -> callService.getOne(url, HttpHeaders.EMPTY, PeliasTravelPointResponse.class))
-                .flatMap()
+                .flatMap(this::handleEmptyReverseResponse)
+                .flatMapMany(peliasMapperService::extractTravelPointsFrom);
     }
 
     private String getAutocompleteRequestString(ApiToken apiToken) {
@@ -90,7 +90,7 @@ public class PeliasApiServiceImpl implements PeliasApiService {
     }
 
     private Mono<PeliasTravelPointResponse> handleEmptyAutocompleteResponse(PeliasTravelPointResponse response) {
-        if (response.getFeatures().size() == 0) {
+        if (response.getFeatures().size() == EMPTY_RESPONSE_SIZE) {
             Optional<String> optionalSearchText = Optional.ofNullable(response.getGeocoding().getQuery().getText());
             optionalSearchText.ifPresent(searchText -> log.info("No result found in pelias for searchText: ".concat(searchText)));
             return Mono.empty();
@@ -98,10 +98,24 @@ public class PeliasApiServiceImpl implements PeliasApiService {
         return Mono.just(response);
     }
 
-    private Mono<PeliasTravelPointResponse> handleEmptyCoordinateResponse(PeliasTravelPointResponse response) {
-        if (response.getFeatures().size() == 0) {
-            Optional<String> optionalLongitude = Optional.ofNullable()
+    private Mono<PeliasTravelPointResponse> handleEmptyReverseResponse(PeliasTravelPointResponse response) {
+        if (response.getFeatures().size() == EMPTY_RESPONSE_SIZE) {
+            Optional<Double> optionalLongitude = Optional.ofNullable(response.getGeocoding().getQuery().getPointLon());
+            Optional<Double> optionalLatitude = Optional.ofNullable(response.getGeocoding().getQuery().getPointLat());
+
+            if (optionalLongitude.isPresent() && optionalLatitude.isPresent()) {
+                logEmptyReverseResponse(optionalLongitude.get(), optionalLatitude.get());
+            }
         }
+        return Mono.just(response);
+    }
+
+    private void logEmptyReverseResponse(double longitude, double latitude) {
+        log.info("No result found in pelias for Lon/Lat:"
+                .concat(String.valueOf(longitude))
+                .concat("/")
+                .concat(String.valueOf(latitude))
+        );
     }
 
 }

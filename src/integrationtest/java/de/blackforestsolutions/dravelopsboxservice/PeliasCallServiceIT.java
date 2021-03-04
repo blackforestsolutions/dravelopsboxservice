@@ -32,7 +32,7 @@ public class PeliasCallServiceIT {
     private ApiToken.ApiTokenBuilder peliasTestApiToken;
 
     @Test
-    void test_peliasAutocompleteCall() {
+    void test_peliasAutocompleteCall_returns_more_than_one_results_and_correct_query_params() {
         ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(peliasTestApiToken.build());
         testData.setPath(peliasHttpCallBuilderService.buildPeliasAutocompletePathWith(testData.build()));
 
@@ -40,6 +40,8 @@ public class PeliasCallServiceIT {
 
         StepVerifier.create(result)
                 .assertNext(peliasTravelPointResponse -> {
+                    assertThat(peliasTravelPointResponse.getGeocoding().getQuery().getSize()).isEqualTo((Long.valueOf(testData.getMaxResults())));
+                    assertThat(peliasTravelPointResponse.getGeocoding().getQuery().getText()).isEqualTo(testData.getDeparture());
                     assertThat(peliasTravelPointResponse.getGeocoding().getQuery().getLang().getIso6391()).isEqualTo(testData.getLanguage().getLanguage());
                     assertThat(peliasTravelPointResponse.getFeatures().size()).isGreaterThan(0);
                     assertThat(peliasTravelPointResponse.getFeatures().size()).isLessThanOrEqualTo(testData.getMaxResults());
@@ -57,6 +59,8 @@ public class PeliasCallServiceIT {
 
         StepVerifier.create(result)
                 .assertNext(peliasTravelPointResponse -> {
+                    assertThat(peliasTravelPointResponse.getGeocoding().getQuery().getSize()).isEqualTo((Long.valueOf(testData.getMaxResults())));
+                    assertThat(peliasTravelPointResponse.getGeocoding().getQuery().getText()).isEqualTo(testData.getDeparture());
                     assertThat(peliasTravelPointResponse.getGeocoding().getQuery().getLang().getIso6391()).isEqualTo(testData.getLanguage().getLanguage());
                     assertThat(peliasTravelPointResponse.getFeatures().size()).isEqualTo(0);
                     assertThat(peliasTravelPointResponse.getFeatures().size()).isLessThanOrEqualTo(testData.getMaxResults());
@@ -65,14 +69,21 @@ public class PeliasCallServiceIT {
     }
 
     @Test
-    void test_peliasReverseCall() {
+    void test_peliasReverseCall_returns_more_than_one_results_and_correct_query_params() {
         ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(peliasTestApiToken);
         testData.setPath(peliasHttpCallBuilderService.buildPeliasReversePathWith(peliasTestApiToken.build()));
 
         Mono<PeliasTravelPointResponse> result = callService.getOne(buildUrlWith(testData.build()).toString(), HttpHeaders.EMPTY, PeliasTravelPointResponse.class);
 
         StepVerifier.create(result)
-                .assertNext(peliasTravelPointResponse -> assertThat(peliasTravelPointResponse.getFeatures().size()).isGreaterThan(0))
+                .assertNext(peliasTravelPointResponse -> {
+                    assertThat(peliasTravelPointResponse.getGeocoding().getQuery().getSize()).isEqualTo((Long.valueOf(testData.getMaxResults())));
+                    assertThat(peliasTravelPointResponse.getGeocoding().getQuery().getPointLon()).isEqualTo(testData.getArrivalCoordinate().getX());
+                    assertThat(peliasTravelPointResponse.getGeocoding().getQuery().getPointLat()).isEqualTo(testData.getArrivalCoordinate().getY());
+                    assertThat(peliasTravelPointResponse.getGeocoding().getQuery().getLang().getIso6391()).isEqualTo(testData.getLanguage().getLanguage());
+                    assertThat(peliasTravelPointResponse.getFeatures().size()).isGreaterThan(0);
+                    assertThat(peliasTravelPointResponse.getFeatures().size()).isLessThanOrEqualTo(testData.getMaxResults());
+                })
                 .verifyComplete();
     }
 
@@ -85,7 +96,14 @@ public class PeliasCallServiceIT {
         Mono<PeliasTravelPointResponse> result = callService.getOne(buildUrlWith(testData.build()).toString(), HttpHeaders.EMPTY, PeliasTravelPointResponse.class);
 
         StepVerifier.create(result)
-                .assertNext(peliasTravelPointResponse -> assertThat(peliasTravelPointResponse.getFeatures().size()).isEqualTo(0))
+                .assertNext(peliasTravelPointResponse -> {
+                    assertThat(peliasTravelPointResponse.getGeocoding().getQuery().getSize()).isEqualTo((Long.valueOf(testData.getMaxResults())));
+                    assertThat(peliasTravelPointResponse.getGeocoding().getQuery().getPointLon()).isEqualTo(testData.getArrivalCoordinate().getX());
+                    assertThat(peliasTravelPointResponse.getGeocoding().getQuery().getPointLat()).isEqualTo(testData.getArrivalCoordinate().getY());
+                    assertThat(peliasTravelPointResponse.getGeocoding().getQuery().getLang().getIso6391()).isEqualTo(testData.getLanguage().getLanguage());
+                    assertThat(peliasTravelPointResponse.getFeatures().size()).isEqualTo(0);
+                    assertThat(peliasTravelPointResponse.getFeatures().size()).isLessThanOrEqualTo(testData.getMaxResults());
+                })
                 .verifyComplete();
     }
 

@@ -8,8 +8,6 @@ import java.util.Objects;
 @Service
 public class PeliasHttpCallBuilderServiceImpl implements PeliasHttpCallBuilderService {
 
-    private static final int MIN_LAYERS_SIZE = 1;
-
     private static final String AUTOCOMPLETE_PATH = "autocomplete";
     private static final String REVERSE_PATH = "reverse";
 
@@ -23,6 +21,7 @@ public class PeliasHttpCallBuilderServiceImpl implements PeliasHttpCallBuilderSe
     private static final String LAYERS_PARAM = "layers";
     private static final String LATITUDE_PARAM = "point.lat";
     private static final String LONGITUDE_PARAM = "point.lon";
+    private static final String RADIUS_PARAM = "boundary.circle.radius";
 
     @Override
     public String buildPeliasAutocompletePathWith(ApiToken apiToken) {
@@ -34,9 +33,6 @@ public class PeliasHttpCallBuilderServiceImpl implements PeliasHttpCallBuilderSe
         Objects.requireNonNull(apiToken.getBox().getTopLeft(), "topLeft from box is not allowed to be null");
         Objects.requireNonNull(apiToken.getBox().getBottomRight(), "bottomRight from box is not allowed to be null");
         Objects.requireNonNull(apiToken.getLayers(), "layers is not allowed to be null");
-        if (apiToken.getLayers().size() < MIN_LAYERS_SIZE) {
-            throw new NullPointerException();
-        }
         return "/"
                 .concat(apiToken.getApiVersion())
                 .concat("/")
@@ -82,6 +78,7 @@ public class PeliasHttpCallBuilderServiceImpl implements PeliasHttpCallBuilderSe
         Objects.requireNonNull(apiToken.getMaxResults(), "maxResults is not allowed to be null");
         Objects.requireNonNull(apiToken.getApiVersion(), "apiVersion is not allowed to be null");
         Objects.requireNonNull(apiToken.getLayers(), "layers is not allowed to be null");
+        Objects.requireNonNull(apiToken.getRadiusInKilometers(), "radius in kilometers is not allowed to be null");
         return "/"
                 .concat(apiToken.getApiVersion())
                 .concat("/")
@@ -105,7 +102,11 @@ public class PeliasHttpCallBuilderServiceImpl implements PeliasHttpCallBuilderSe
                 .concat("&")
                 .concat(LAYERS_PARAM)
                 .concat("=")
-                .concat(String.join(",", apiToken.getLayers()));
+                .concat(String.join(",", apiToken.getLayers()))
+                .concat("&")
+                .concat(RADIUS_PARAM)
+                .concat("=")
+                .concat(String.valueOf(apiToken.getRadiusInKilometers()));
     }
 
 }

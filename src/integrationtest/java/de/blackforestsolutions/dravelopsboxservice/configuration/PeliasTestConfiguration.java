@@ -29,6 +29,8 @@ public class PeliasTestConfiguration {
     private Double bottomRightLongitude;
     @Value("${test.apitokens[0].box.bottomRight.y}")
     private Double bottomRightLatitude;
+    @Value("${test.apitokens[0].radiusInKilometers}")
+    private Integer radiusInKilometers;
 
     @Bean
     @ConfigurationProperties(prefix = "pelias")
@@ -37,6 +39,7 @@ public class PeliasTestConfiguration {
                 .setDeparture(departure)
                 .setLanguage(language)
                 .setArrivalCoordinate(new de.blackforestsolutions.dravelopsdatamodel.Point.PointBuilder(coordinateLongitude, coordinateLatitude).build())
+                .setRadiusInKilometers(radiusInKilometers)
                 .setBox(new Box.BoxBuilder(
                         new Point.PointBuilder(leftTopLongitude, leftTopLatitude).build(),
                         new Point.PointBuilder(bottomRightLongitude, bottomRightLatitude).build()
