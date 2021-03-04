@@ -95,7 +95,7 @@ class PeliasHttpCallBuilderServiceTest {
 
         String result = classUnderTest.buildPeliasReversePathWith(testData.build());
 
-        assertThat(result).isEqualTo("/v1/reverse?point.lat=48.087517&point.lon=7.891595&size=10&lang=de&layers=venue,address,street,country,macroregion,region,macrocounty,county,locality,localadmin,borough,neighbourhood,coarse,postalcode&boundary.circle.radius=1");
+        assertThat(result).isEqualTo("/v1/reverse?point.lat=48.087517&point.lon=7.891595&size=10&lang=de&layers=venue,address,street,country,macroregion,region,macrocounty,county,locality,localadmin,borough,neighbourhood,coarse,postalcode&boundary.circle.radius=1.0");
     }
 
     @Test

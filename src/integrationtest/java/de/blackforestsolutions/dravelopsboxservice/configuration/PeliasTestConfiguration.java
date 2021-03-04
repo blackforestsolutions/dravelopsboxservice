@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.Metrics;
 
 import java.util.Locale;
 
@@ -30,7 +32,7 @@ public class PeliasTestConfiguration {
     @Value("${test.apitokens[0].box.bottomRight.y}")
     private Double bottomRightLatitude;
     @Value("${test.apitokens[0].radiusInKilometers}")
-    private Integer radiusInKilometers;
+    private Double radiusInKilometers;
 
     @Bean
     @ConfigurationProperties(prefix = "pelias")
@@ -39,7 +41,7 @@ public class PeliasTestConfiguration {
                 .setDeparture(departure)
                 .setLanguage(language)
                 .setArrivalCoordinate(new de.blackforestsolutions.dravelopsdatamodel.Point.PointBuilder(coordinateLongitude, coordinateLatitude).build())
-                .setRadiusInKilometers(radiusInKilometers)
+                .setRadiusInKilometers(new Distance(radiusInKilometers, Metrics.KILOMETERS))
                 .setBox(new Box.BoxBuilder(
                         new Point.PointBuilder(leftTopLongitude, leftTopLatitude).build(),
                         new Point.PointBuilder(bottomRightLongitude, bottomRightLatitude).build()

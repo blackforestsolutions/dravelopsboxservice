@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.Metrics;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
@@ -91,7 +93,7 @@ public class PeliasCallServiceIT {
     void test_peliasReverseCall_returns_no_result_with_unknown_coordinates() {
         ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(peliasTestApiToken);
         testData.setArrivalCoordinate(new Point.PointBuilder(0.0d, 0.0d).build());
-        testData.setRadiusInKilometers(1);
+        testData.setRadiusInKilometers(new Distance(1.0d, Metrics.KILOMETERS));
         testData.setPath(peliasHttpCallBuilderService.buildPeliasReversePathWith(testData.build()));
 
         Mono<PeliasTravelPointResponse> result = callService.getOne(buildUrlWith(testData.build()).toString(), HttpHeaders.EMPTY, PeliasTravelPointResponse.class);

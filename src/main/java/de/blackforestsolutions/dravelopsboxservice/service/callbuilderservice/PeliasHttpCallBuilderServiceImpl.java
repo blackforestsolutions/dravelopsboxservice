@@ -106,7 +106,7 @@ public class PeliasHttpCallBuilderServiceImpl implements PeliasHttpCallBuilderSe
                 .concat("&")
                 .concat(RADIUS_PARAM)
                 .concat("=")
-                .concat(String.valueOf(apiToken.getRadiusInKilometers()));
+                .concat(String.valueOf(apiToken.getRadiusInKilometers().getValue()));
     }
 
 }

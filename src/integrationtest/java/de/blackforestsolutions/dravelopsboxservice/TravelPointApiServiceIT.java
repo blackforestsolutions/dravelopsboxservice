@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.Metrics;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
@@ -53,7 +55,7 @@ class TravelPointApiServiceIT {
     void test_retrieveNearestAddressesFromApiService_with_incorrect_apiToken_returns_zero_travelPoints() {
         ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(travelPointApiToken.build());
         testData.setArrivalCoordinate(new Point.PointBuilder(0.0d, 0.0d).build());
-        testData.setRadiusInKilometers(1);
+        testData.setRadiusInKilometers(new Distance(1.0d, Metrics.KILOMETERS));
 
         Flux<TravelPoint> result = classUnderTest.retrieveNearestAddressesFromApiService(testData.build());
 
