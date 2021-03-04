@@ -53,6 +53,7 @@ class TravelPointApiServiceIT {
     void test_retrieveNearestAddressesFromApiService_with_incorrect_apiToken_returns_zero_travelPoints() {
         ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(travelPointApiToken.build());
         testData.setArrivalCoordinate(new Point.PointBuilder(0.0d, 0.0d).build());
+        testData.setRadiusInKilometers(1);
 
         Flux<TravelPoint> result = classUnderTest.retrieveNearestAddressesFromApiService(testData.build());
 

@@ -91,6 +91,7 @@ public class PeliasCallServiceIT {
     void test_peliasReverseCall_returns_no_result_with_unknown_coordinates() {
         ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(peliasTestApiToken);
         testData.setArrivalCoordinate(new Point.PointBuilder(0.0d, 0.0d).build());
+        testData.setRadiusInKilometers(1);
         testData.setPath(peliasHttpCallBuilderService.buildPeliasReversePathWith(testData.build()));
 
         Mono<PeliasTravelPointResponse> result = callService.getOne(buildUrlWith(testData.build()).toString(), HttpHeaders.EMPTY, PeliasTravelPointResponse.class);

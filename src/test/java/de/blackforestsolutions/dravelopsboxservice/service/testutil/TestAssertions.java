@@ -22,6 +22,7 @@ public class TestAssertions {
 
     public static Consumer<TravelPoint> getTravelPointApiNearestAddressesAsserts() {
         return travelPoint -> {
+            assertThat(travelPoint).isNotNull();
             assertThat(travelPoint.getName()).isNotEmpty();
             assertThat(travelPoint.getPoint()).isNotNull();
             assertThat(travelPoint.getPoint().getX()).isGreaterThanOrEqualTo(MIN_WGS_84_LONGITUDE);
