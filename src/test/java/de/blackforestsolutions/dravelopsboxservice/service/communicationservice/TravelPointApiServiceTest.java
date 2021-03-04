@@ -17,6 +17,7 @@ import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
 import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.ApiTokenObjectMother.*;
+import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.TravelPointObjectMother.getFurtwangenLocalityTravelPoint;
 import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.TravelPointObjectMother.getGermanyTravelPoint;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -36,12 +37,15 @@ class TravelPointApiServiceTest {
                 .thenReturn(getPeliasAutocompleteApiToken());
         when(peliasApiService.getAutocompleteAddressesFrom(any(ApiToken.class))).thenReturn(Flux.just(
                 new CallStatus<>(getGermanyTravelPoint(null), Status.SUCCESS, null),
+                new CallStatus<>(getGermanyTravelPoint(null), Status.SUCCESS, null),
                 new CallStatus<>(null, Status.FAILED, new Exception())
         ));
 
         when(requestTokenHandlerService.getNearestAddressesApiTokenWith(any(ApiToken.class), any(ApiToken.class)))
                 .thenReturn(getPeliasNearestAddressesApiToken());
         when(peliasApiService.getNearestAddressesFrom(any(ApiToken.class))).thenReturn(Flux.just(
+                new CallStatus<>(getFurtwangenLocalityTravelPoint(new Distance(0.5d, Metrics.KILOMETERS)), Status.SUCCESS, null),
+                new CallStatus<>(getGermanyTravelPoint(new Distance(0.0d, Metrics.KILOMETERS)), Status.SUCCESS, null),
                 new CallStatus<>(getGermanyTravelPoint(new Distance(0.0d, Metrics.KILOMETERS)), Status.SUCCESS, null),
                 new CallStatus<>(null, Status.FAILED, new Exception())
         ));
@@ -59,13 +63,14 @@ class TravelPointApiServiceTest {
     }
 
     @Test
-    void test_retrieveNearestAddressesFromApiService_with_addressToken_requestTokenHandler_exceptionHandler_and_apiService_returns_travelPoints() {
+    void test_retrieveNearestAddressesFromApiService_with_addressToken_requestTokenHandler_exceptionHandler_and_apiService_returns_sorted_travelPoints() {
         ApiToken testData = getNearestAddressesBoxServiceApiToken();
 
         Flux<TravelPoint> result = classUnderTest.retrieveNearestAddressesFromApiService(testData);
 
         StepVerifier.create(result)
                 .assertNext(travelPoint -> assertThat(travelPoint).isEqualToComparingFieldByFieldRecursively(getGermanyTravelPoint(new Distance(0.0d, Metrics.KILOMETERS))))
+                .assertNext(travelPoint -> assertThat(travelPoint).isEqualToComparingFieldByFieldRecursively(getFurtwangenLocalityTravelPoint(new Distance(0.5d, Metrics.KILOMETERS))))
                 .verifyComplete();
     }
 
@@ -82,18 +87,21 @@ class TravelPointApiServiceTest {
         InOrder inOrder = inOrder(requestTokenHandlerService, peliasApiService, exceptionHandlerService);
         inOrder.verify(requestTokenHandlerService, times(1)).getAutocompleteApiTokenWith(boxServiceTokenArg.capture(), configuredTokenArg.capture());
         inOrder.verify(peliasApiService, times(1)).getAutocompleteAddressesFrom(mergedTokenArg.capture());
-        inOrder.verify(exceptionHandlerService, times(2)).handleExceptions(callStatusArg.capture());
+        inOrder.verify(exceptionHandlerService, times(3)).handleExceptions(callStatusArg.capture());
         inOrder.verifyNoMoreInteractions();
         assertThat(boxServiceTokenArg.getValue()).isEqualToComparingFieldByField(getAutocompleteBoxServiceApiToken());
         assertThat(configuredTokenArg.getValue()).isEqualToComparingFieldByField(getConfiguredPeliasApiToken());
         assertThat(mergedTokenArg.getValue()).isEqualToComparingFieldByFieldRecursively(getPeliasAutocompleteApiToken());
-        assertThat(callStatusArg.getAllValues().size()).isEqualTo(2);
+        assertThat(callStatusArg.getAllValues().size()).isEqualTo(3);
         assertThat(callStatusArg.getAllValues().get(0).getStatus()).isEqualTo(Status.SUCCESS);
         assertThat(callStatusArg.getAllValues().get(0).getThrowable()).isNull();
         assertThat(callStatusArg.getAllValues().get(0).getCalledObject()).isInstanceOf(TravelPoint.class);
-        assertThat(callStatusArg.getAllValues().get(1).getStatus()).isEqualTo(Status.FAILED);
-        assertThat(callStatusArg.getAllValues().get(1).getCalledObject()).isNull();
-        assertThat(callStatusArg.getAllValues().get(1).getThrowable()).isInstanceOf(Exception.class);
+        assertThat(callStatusArg.getAllValues().get(1).getStatus()).isEqualTo(Status.SUCCESS);
+        assertThat(callStatusArg.getAllValues().get(1).getThrowable()).isNull();
+        assertThat(callStatusArg.getAllValues().get(1).getCalledObject()).isInstanceOf(TravelPoint.class);
+        assertThat(callStatusArg.getAllValues().get(2).getStatus()).isEqualTo(Status.FAILED);
+        assertThat(callStatusArg.getAllValues().get(2).getCalledObject()).isNull();
+        assertThat(callStatusArg.getAllValues().get(2).getThrowable()).isInstanceOf(Exception.class);
     }
 
     @Test
@@ -109,18 +117,24 @@ class TravelPointApiServiceTest {
         InOrder inOrder = inOrder(requestTokenHandlerService, peliasApiService, exceptionHandlerService);
         inOrder.verify(requestTokenHandlerService, times(1)).getNearestAddressesApiTokenWith(boxServiceTokenArg.capture(), configuredTokenArg.capture());
         inOrder.verify(peliasApiService, times(1)).getNearestAddressesFrom(mergedTokenArg.capture());
-        inOrder.verify(exceptionHandlerService, times(2)).handleExceptions(callStatusArg.capture());
+        inOrder.verify(exceptionHandlerService, times(4)).handleExceptions(callStatusArg.capture());
         inOrder.verifyNoMoreInteractions();
         assertThat(boxServiceTokenArg.getValue()).isEqualToComparingFieldByField(getNearestAddressesBoxServiceApiToken());
         assertThat(configuredTokenArg.getValue()).isEqualToComparingFieldByField(getConfiguredPeliasApiToken());
         assertThat(mergedTokenArg.getValue()).isEqualToComparingFieldByFieldRecursively(getPeliasNearestAddressesApiToken());
-        assertThat(callStatusArg.getAllValues().size()).isEqualTo(2);
+        assertThat(callStatusArg.getAllValues().size()).isEqualTo(4);
         assertThat(callStatusArg.getAllValues().get(0).getStatus()).isEqualTo(Status.SUCCESS);
         assertThat(callStatusArg.getAllValues().get(0).getThrowable()).isNull();
         assertThat(callStatusArg.getAllValues().get(0).getCalledObject()).isInstanceOf(TravelPoint.class);
-        assertThat(callStatusArg.getAllValues().get(1).getStatus()).isEqualTo(Status.FAILED);
-        assertThat(callStatusArg.getAllValues().get(1).getCalledObject()).isNull();
-        assertThat(callStatusArg.getAllValues().get(1).getThrowable()).isInstanceOf(Exception.class);
+        assertThat(callStatusArg.getAllValues().get(1).getStatus()).isEqualTo(Status.SUCCESS);
+        assertThat(callStatusArg.getAllValues().get(1).getThrowable()).isNull();
+        assertThat(callStatusArg.getAllValues().get(1).getCalledObject()).isInstanceOf(TravelPoint.class);
+        assertThat(callStatusArg.getAllValues().get(2).getStatus()).isEqualTo(Status.SUCCESS);
+        assertThat(callStatusArg.getAllValues().get(2).getThrowable()).isNull();
+        assertThat(callStatusArg.getAllValues().get(2).getCalledObject()).isInstanceOf(TravelPoint.class);
+        assertThat(callStatusArg.getAllValues().get(3).getStatus()).isEqualTo(Status.FAILED);
+        assertThat(callStatusArg.getAllValues().get(3).getCalledObject()).isNull();
+        assertThat(callStatusArg.getAllValues().get(3).getThrowable()).isInstanceOf(Exception.class);
     }
 
     @Test

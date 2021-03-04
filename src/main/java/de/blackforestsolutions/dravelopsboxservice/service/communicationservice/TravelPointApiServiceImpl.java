@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Comparator;
+
 
 @Slf4j
 @Service
@@ -34,6 +36,7 @@ public class TravelPointApiServiceImpl implements TravelPointApiService {
                 .map(userToken -> requestTokenHandlerService.getAutocompleteApiTokenWith(userToken, peliasApiToken))
                 .flatMapMany(peliasApiService::getAutocompleteAddressesFrom)
                 .flatMap(exceptionHandlerService::handleExceptions)
+                .distinct()
                 .onErrorResume(exceptionHandlerService::handleExceptions);
     }
 
@@ -43,6 +46,8 @@ public class TravelPointApiServiceImpl implements TravelPointApiService {
                 .map(userToken -> requestTokenHandlerService.getNearestAddressesApiTokenWith(userToken, peliasApiToken))
                 .flatMapMany(peliasApiService::getNearestAddressesFrom)
                 .flatMap(exceptionHandlerService::handleExceptions)
+                .distinct()
+                .sort(Comparator.comparingDouble(travelPoint -> travelPoint.getDistanceInKilometers().getValue()))
                 .onErrorResume(exceptionHandlerService::handleExceptions);
     }
 }
