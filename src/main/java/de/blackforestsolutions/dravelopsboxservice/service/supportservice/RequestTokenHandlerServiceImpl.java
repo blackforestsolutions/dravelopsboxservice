@@ -1,9 +1,9 @@
 package de.blackforestsolutions.dravelopsboxservice.service.supportservice;
 
+import de.blackforestsolutions.dravelopsboxservice.service.communicationservice.BackendApiService;
 import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
 import de.blackforestsolutions.dravelopsdatamodel.Box;
 import de.blackforestsolutions.dravelopsdatamodel.exception.NoResultFoundException;
-import de.blackforestsolutions.dravelopsboxservice.service.communicationservice.BackendApiService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -28,11 +28,20 @@ public class RequestTokenHandlerServiceImpl implements RequestTokenHandlerServic
     }
 
     @Override
-    public ApiToken getRequestApiTokenWith(ApiToken request, ApiToken configuredPeliasApiToken) {
+    public ApiToken getAutocompleteApiTokenWith(ApiToken requestApiToken, ApiToken configuredPeliasApiToken) {
         return new ApiToken.ApiTokenBuilder(configuredPeliasApiToken)
-                .setLanguage(request.getLanguage())
-                .setDeparture(request.getDeparture())
+                .setLanguage(requestApiToken.getLanguage())
+                .setDeparture(requestApiToken.getDeparture())
                 .setBox(stationPersistenceBox)
+                .build();
+    }
+
+    @Override
+    public ApiToken getNearestAddressesApiTokenWith(ApiToken requestApiToken, ApiToken configuredPeliasApiToken) {
+        return new ApiToken.ApiTokenBuilder(configuredPeliasApiToken)
+                .setArrivalCoordinate(requestApiToken.getArrivalCoordinate())
+                .setRadiusInKilometers(requestApiToken.getRadiusInKilometers())
+                .setLanguage(requestApiToken.getLanguage())
                 .build();
     }
 

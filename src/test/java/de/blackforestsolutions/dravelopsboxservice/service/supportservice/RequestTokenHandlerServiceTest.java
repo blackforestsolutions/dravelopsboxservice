@@ -136,13 +136,23 @@ class RequestTokenHandlerServiceTest {
     }
 
     @Test
-    void test_getRequestApiTokenWith_boxToken_and_configuredPeliasApiToken_returns_merged_token_for_autocompleteCall() {
-        ApiToken boxTokenTestData = getBoxServiceApiToken();
-        ApiToken configuredPeliasTestData = getConfiguredPeliasAutocompleteApiToken();
+    void test_getAutocompleteApiTokenWith_autocompleteBoxToken_and_configuredPeliasApiToken_returns_merged_token_for_autocompleteCall() {
+        ApiToken autocompleteTokenTestData = getAutocompleteBoxServiceApiToken();
+        ApiToken configuredPeliasTestData = getConfiguredPeliasApiToken();
 
-        ApiToken result = classUnderTest.getRequestApiTokenWith(boxTokenTestData, configuredPeliasTestData);
+        ApiToken result = classUnderTest.getAutocompleteApiTokenWith(autocompleteTokenTestData, configuredPeliasTestData);
 
         assertThat(result).isEqualToIgnoringGivenFields(getPeliasAutocompleteApiToken(), "box");
         assertThat(result.getBox()).isEqualToComparingFieldByFieldRecursively(getBoxServiceStartBox());
+    }
+
+    @Test
+    void test_getNearestAddressesApiTokenWith_nearestAddressesToken_and_configuredPeliasApiToken_returns_merged_token_for_reverseCall() {
+        ApiToken nearestAddressTokenTestData = getNearestAddressesBoxServiceApiToken();
+        ApiToken configuredPeliasTestData = getConfiguredPeliasApiToken();
+
+        ApiToken result = classUnderTest.getNearestAddressesApiTokenWith(nearestAddressTokenTestData, configuredPeliasTestData);
+
+        assertThat(result).isEqualToComparingFieldByFieldRecursively(getPeliasNearestAddressesApiToken());
     }
 }

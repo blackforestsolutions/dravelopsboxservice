@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.context.annotation.Bean;
 
-import java.util.Arrays;
+import java.util.List;
 
 @SpringBootConfiguration
 public class PeliasConfiguration {
@@ -21,7 +21,8 @@ public class PeliasConfiguration {
     @Value("${pelias.maxResults}")
     private int maxResults;
     @Value("${pelias.layers}")
-    private String[] layers;
+    private List<String> layers;
+
 
     @Bean(name = "peliasApiToken")
     public ApiToken apiToken() {
@@ -31,7 +32,7 @@ public class PeliasConfiguration {
                 .setPort(port)
                 .setApiVersion(apiVersion)
                 .setMaxResults(maxResults)
-                .setLayers(Arrays.asList(layers))
+                .setLayers(layers)
                 .build();
     }
 }
