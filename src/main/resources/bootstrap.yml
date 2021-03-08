@@ -1,0 +1,7 @@
+spring:
+  profiles:
+    active: dev,bw
+  application:
+    name: boxservice
+server:
+  port: 8083
