@@ -38,36 +38,6 @@ class RequestTokenHandlerServiceTest {
 
     private final RequestTokenHandlerService classUnderTest = new RequestTokenHandlerServiceImpl(stationPersistenceBox, configuredBoxPersistenceApiToken, backendApiService);
 
-
-    @Test
-    @DisabledOnOs(OS.LINUX)
-    void test_cron_from_properties_is_executed_next_time_correctly_relative_to_last_time() throws ParseException {
-        // Locale.US as github workflow is apparently not executed in germany
-        SimpleDateFormat formatter = new SimpleDateFormat("EE MMM dd HH:mm:ss zzzz yyyy", Locale.US);
-        Date lastExecutionTestDate = formatter.parse("Mon Aug 30 00:00:00 CEST 2020");
-        String cron = getPropertyFromFileAsString("application-dev.properties", "stationpersistence.box.updatetime");
-
-        CronTrigger cronUnderTest = new CronTrigger(cron);
-        Date result = cronUnderTest.nextExecutionTime(new TriggerContext() {
-            @Override
-            public Date lastScheduledExecutionTime() {
-                return lastExecutionTestDate;
-            }
-
-            @Override
-            public Date lastActualExecutionTime() {
-                return lastExecutionTestDate;
-            }
-
-            @Override
-            public Date lastCompletionTime() {
-                return lastExecutionTestDate;
-            }
-        });
-
-        assertThat(result.toString()).isEqualTo("Mon Aug 31 00:00:00 CEST 2020");
-    }
-
     @Test
     void test_updateStationPersistenceBox_updates_box_within_service() {
         when(backendApiService.getOneBy(any(ApiToken.class), eq(Box.class)))

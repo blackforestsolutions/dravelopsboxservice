@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
 @TestConfiguration
-@Import(DistanceConfiguration.class)
+@Import(ConverterConfiguration.class)
 public class TravelPointApiServiceTestConfiguration {
 
     @Value("${test.apitokens[0].arrivalCoordinateLongitude}")
