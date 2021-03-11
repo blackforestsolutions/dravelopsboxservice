@@ -16,7 +16,7 @@ import static de.blackforestsolutions.dravelopsdatamodel.util.DravelOpsHttpCallB
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Import(StationPersistenceApiTestConfiguration.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest
 class StationPersistenceApiCallServiceIT {
 
     private static final double MIN_WGS_84_LONGITUDE = -180.0d;

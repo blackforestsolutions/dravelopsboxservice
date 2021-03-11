@@ -17,7 +17,7 @@ import reactor.test.StepVerifier;
 import static de.blackforestsolutions.dravelopsboxservice.service.testutil.TestAssertions.getTravelPointApiNearestAddressesAsserts;
 
 @Import(TravelPointApiServiceTestConfiguration.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest
 class TravelPointApiServiceIT {
 
     @Autowired
