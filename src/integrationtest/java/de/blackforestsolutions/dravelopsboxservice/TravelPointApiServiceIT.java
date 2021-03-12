@@ -11,13 +11,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Metrics;
+import org.springframework.test.annotation.DirtiesContext;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
 import static de.blackforestsolutions.dravelopsboxservice.service.testutil.TestAssertions.getTravelPointApiNearestAddressesAsserts;
 
 @Import(TravelPointApiServiceTestConfiguration.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class TravelPointApiServiceIT {
 
     @Autowired
