@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import static de.blackforestsolutions.dravelopsboxservice.configuration.GeocodingConfiguration.*;
+
 @Configuration
 public class StationPersistenceApiConfiguration {
-
-    private static final double BOX_START_VALUE = 0.0d;
 
     @Value("${stationpersistence.protocol}")
     private String stationPersistenceProtocol;
@@ -37,8 +37,8 @@ public class StationPersistenceApiConfiguration {
     @Bean
     public Box stationPersistenceBox() {
         return new Box.BoxBuilder(
-                new Point.PointBuilder(BOX_START_VALUE, BOX_START_VALUE).build(),
-                new Point.PointBuilder(BOX_START_VALUE, BOX_START_VALUE).build()
+                new Point.PointBuilder(MIN_WGS_84_LONGITUDE, MAX_WGS_84_LATITUDE).build(),
+                new Point.PointBuilder(MAX_WGS_84_LONGITUDE, MIN_WGS_84_LATITUDE).build()
         ).build();
     }
 }
