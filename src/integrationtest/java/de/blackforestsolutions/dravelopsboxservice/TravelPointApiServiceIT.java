@@ -26,12 +26,12 @@ class TravelPointApiServiceIT {
     private TravelPointApiService classUnderTest;
 
     @Autowired
-    private ApiToken.ApiTokenBuilder travelPointApiToken;
+    private ApiToken travelPointApiToken;
 
 
     @Test
     void test_retrieveAutocompleteAddressesFromApiService_with_incorrect_apiToken_returns_zero_travelPoints() {
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(travelPointApiToken.build());
+        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(travelPointApiToken);
         testData.setDeparture("Noooooooooooooo expected Result");
 
         Flux<TravelPoint> result = classUnderTest.retrieveAutocompleteAddressesFromApiService(testData.build());
@@ -43,7 +43,7 @@ class TravelPointApiServiceIT {
 
     @Test
     void test_retrieveNearestAddressesFromApiService_with_correct_apiToken_returns_travelPoints() {
-        ApiToken testData = travelPointApiToken.build();
+        ApiToken testData = new ApiToken.ApiTokenBuilder(travelPointApiToken).build();
 
         Flux<TravelPoint> result = classUnderTest.retrieveNearestAddressesFromApiService(testData);
 
@@ -55,7 +55,7 @@ class TravelPointApiServiceIT {
 
     @Test
     void test_retrieveNearestAddressesFromApiService_with_incorrect_apiToken_returns_zero_travelPoints() {
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(travelPointApiToken.build());
+        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(travelPointApiToken);
         testData.setArrivalCoordinate(new Point.PointBuilder(0.0d, 0.0d).build());
         testData.setRadiusInKilometers(new Distance(1.0d, Metrics.KILOMETERS));
 
