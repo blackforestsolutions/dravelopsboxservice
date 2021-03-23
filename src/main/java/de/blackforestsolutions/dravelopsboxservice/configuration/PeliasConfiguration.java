@@ -18,21 +18,37 @@ public class PeliasConfiguration {
     private int port;
     @Value("${pelias.apiVersion}")
     private String apiVersion;
-    @Value("${pelias.maxResults}")
-    private int maxResults;
-    @Value("${pelias.layers}")
-    private List<String> layers;
+    @Value("${graphql.playground.tabs[2].maxResults}")
+    private int autocompleteMaxResults;
+    @Value("${graphql.playground.tabs[2].layers}")
+    private List<String> autocompleteLayers;
+    @Value("${graphql.playground.tabs[3].maxResults}")
+    private int nearestAddressesMaxResults;
+    @Value("${graphql.playground.tabs[3].layers}")
+    private List<String> nearestAddressesLayers;
 
 
-    @Bean(name = "peliasApiToken")
-    public ApiToken apiToken() {
+    @Bean
+    public ApiToken peliasAutocompleteApiToken() {
         return new ApiToken.ApiTokenBuilder()
                 .setProtocol(protocol)
                 .setHost(host)
                 .setPort(port)
                 .setApiVersion(apiVersion)
-                .setMaxResults(maxResults)
-                .setLayers(layers)
+                .setMaxResults(autocompleteMaxResults)
+                .setLayers(autocompleteLayers)
+                .build();
+    }
+
+    @Bean
+    public ApiToken peliasNearestAddressesApiToken() {
+        return new ApiToken.ApiTokenBuilder()
+                .setProtocol(protocol)
+                .setHost(host)
+                .setPort(port)
+                .setApiVersion(apiVersion)
+                .setMaxResults(nearestAddressesMaxResults)
+                .setLayers(nearestAddressesLayers)
                 .build();
     }
 }
