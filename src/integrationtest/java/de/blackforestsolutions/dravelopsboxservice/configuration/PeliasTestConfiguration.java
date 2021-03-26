@@ -27,19 +27,25 @@ public class PeliasTestConfiguration {
 
     @Bean
     @ConfigurationProperties(prefix = "pelias")
-    public ApiToken.ApiTokenBuilder peliasTestAutocompleteApiToken(@Autowired ApiToken travelPointApiToken) {
-        return new ApiToken.ApiTokenBuilder(travelPointApiToken)
-                .setMaxResults(autocompleteMaxResults)
-                .setLayers(autocompleteLayers)
-                .setBox(getBoxServiceStartBox());
+    public ApiToken peliasTestAutocompleteApiToken(@Autowired ApiToken travelPointApiToken) {
+        ApiToken apiToken = new ApiToken(travelPointApiToken);
+
+        apiToken.setMaxResults(autocompleteMaxResults);
+        apiToken.setLayers(autocompleteLayers);
+        apiToken.setBox(getBoxServiceStartBox());
+
+        return apiToken;
     }
 
     @Bean
     @ConfigurationProperties(prefix = "pelias")
-    public ApiToken.ApiTokenBuilder peliasTestNearestAddressesApiToken(@Autowired ApiToken travelPointApiToken) {
-        return new ApiToken.ApiTokenBuilder(travelPointApiToken)
-                .setMaxResults(nearestAddressesMaxResults)
-                .setLayers(nearestAddressesLayers)
-                .setBox(getBoxServiceStartBox());
+    public ApiToken peliasTestNearestAddressesApiToken(@Autowired ApiToken travelPointApiToken) {
+        ApiToken apiToken = new ApiToken(travelPointApiToken);
+
+        apiToken.setMaxResults(nearestAddressesMaxResults);
+        apiToken.setLayers(nearestAddressesLayers);
+        apiToken.setBox(getBoxServiceStartBox());
+
+        return apiToken;
     }
 }

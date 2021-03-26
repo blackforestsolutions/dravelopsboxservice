@@ -33,26 +33,25 @@ public class PeliasConfiguration {
     @RefreshScope
     @Bean
     public ApiToken peliasAutocompleteApiToken() {
-        return new ApiToken.ApiTokenBuilder()
-                .setProtocol(protocol)
-                .setHost(host)
-                .setPort(port)
-                .setApiVersion(apiVersion)
-                .setMaxResults(autocompleteMaxResults)
-                .setLayers(autocompleteLayers)
-                .build();
+        return buildApiTokenBy(autocompleteMaxResults, autocompleteLayers);
     }
 
     @RefreshScope
     @Bean
     public ApiToken peliasNearestAddressesApiToken() {
-        return new ApiToken.ApiTokenBuilder()
-                .setProtocol(protocol)
-                .setHost(host)
-                .setPort(port)
-                .setApiVersion(apiVersion)
-                .setMaxResults(nearestAddressesMaxResults)
-                .setLayers(nearestAddressesLayers)
-                .build();
+        return buildApiTokenBy(nearestAddressesMaxResults, nearestAddressesLayers);
+    }
+
+    private ApiToken buildApiTokenBy(int maxResults, List<String> layers) {
+        ApiToken apiToken = new ApiToken();
+
+        apiToken.setProtocol(protocol);
+        apiToken.setHost(host);
+        apiToken.setPort(port);
+        apiToken.setApiVersion(apiVersion);
+        apiToken.setMaxResults(maxResults);
+        apiToken.setLayers(layers);
+
+        return apiToken;
     }
 }
