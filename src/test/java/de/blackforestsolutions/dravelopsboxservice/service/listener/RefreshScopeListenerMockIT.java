@@ -3,6 +3,8 @@ package de.blackforestsolutions.dravelopsboxservice.service.listener;
 import de.blackforestsolutions.dravelopsboxservice.service.communicationservice.BackendApiService;
 import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
 import de.blackforestsolutions.dravelopsdatamodel.Box;
+import org.awaitility.Awaitility;
+import org.awaitility.Duration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,6 +34,10 @@ class RefreshScopeListenerMockIT {
         refreshEndpoint.refresh();
 
         // called first on startup and secondly on actuator refresh
-        verify(backendApiService, times(2)).getOneBy(any(ApiToken.class), eq(Box.class));
+        Awaitility.await()
+                .atMost(Duration.FIVE_SECONDS)
+                .untilAsserted(() -> {
+                    verify(backendApiService, times(2)).getOneBy(any(ApiToken.class), eq(Box.class));
+                });
     }
 }
