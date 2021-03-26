@@ -32,13 +32,15 @@ public class PeliasCallServiceIT {
     @Autowired
     private CallService callService;
 
+    private ApiToken.ApiTokenBuilder peliasTestAutocompleteApiToken;
+
     @Autowired
-    private ApiToken peliasTestApiToken;
+    private ApiToken.ApiTokenBuilder peliasTestNearestAddressesApiToken;
 
     @Test
     void test_peliasAutocompleteCall_returns_more_than_one_results_and_correct_query_params() {
-        ApiToken testData = new ApiToken(peliasTestApiToken);
-        testData.setPath(peliasHttpCallBuilderService.buildPeliasAutocompletePathWith(testData));
+        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(peliasTestAutocompleteApiToken.build());
+        testData.setPath(peliasHttpCallBuilderService.buildPeliasAutocompletePathWith(testData.build()));
 
         Mono<PeliasTravelPointResponse> result = callService.getOne(buildUrlWith(testData).toString(), HttpHeaders.EMPTY, PeliasTravelPointResponse.class);
 
@@ -55,7 +57,7 @@ public class PeliasCallServiceIT {
 
     @Test
     void test_peliasAutocompleteCall_returns_no_result_with_unknown_search_text() {
-        ApiToken testData = new ApiToken(peliasTestApiToken);
+        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(peliasTestAutocompleteApiToken);
         testData.setDeparture("Noooooooooooooo expected Result");
         testData.setPath(peliasHttpCallBuilderService.buildPeliasAutocompletePathWith(testData));
 
@@ -74,8 +76,8 @@ public class PeliasCallServiceIT {
 
     @Test
     void test_peliasReverseCall_returns_more_than_one_results_and_correct_query_params() {
-        ApiToken testData = new ApiToken(peliasTestApiToken);
-        testData.setPath(peliasHttpCallBuilderService.buildPeliasReversePathWith(peliasTestApiToken));
+        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(peliasTestNearestAddressesApiToken);
+        testData.setPath(peliasHttpCallBuilderService.buildPeliasReversePathWith(peliasTestNearestAddressesApiToken.build()));
 
         Mono<PeliasTravelPointResponse> result = callService.getOne(buildUrlWith(testData).toString(), HttpHeaders.EMPTY, PeliasTravelPointResponse.class);
 
@@ -93,7 +95,7 @@ public class PeliasCallServiceIT {
 
     @Test
     void test_peliasReverseCall_returns_no_result_with_unknown_coordinates() {
-        ApiToken testData = new ApiToken(peliasTestApiToken);
+        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(peliasTestNearestAddressesApiToken);
         testData.setArrivalCoordinate(new Point.PointBuilder(0.0d, 0.0d).build());
         testData.setRadiusInKilometers(new Distance(1.0d, Metrics.KILOMETERS));
         testData.setPath(peliasHttpCallBuilderService.buildPeliasReversePathWith(testData));
@@ -115,7 +117,7 @@ public class PeliasCallServiceIT {
     @Test
     void test_peliasReverseCall_with_wrong_path() {
         String testUrl = "wrongPath";
-        ApiToken testData = new ApiToken(peliasTestApiToken);
+        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(peliasTestNearestAddressesApiToken);
         testData.setPath(testUrl);
 
         Mono<PeliasTravelPointResponse> result = callService.getOne(buildUrlWith(testData).toString(), HttpHeaders.EMPTY, PeliasTravelPointResponse.class);

@@ -26,10 +26,11 @@ class TravelPointApiServiceTest {
 
     private final ExceptionHandlerService exceptionHandlerService = spy(ExceptionHandlerServiceImpl.class);
     private final RequestTokenHandlerService requestTokenHandlerService = spy(RequestTokenHandlerService.class);
-    private final ApiToken peliasApiToken = getConfiguredPeliasApiToken();
+    private final ApiToken peliasAutocompleteApiToken = getConfiguredPeliasApiToken();
+    private final ApiToken peliasNearestAddressesApiToken = getConfiguredPeliasApiToken();
     private final PeliasApiService peliasApiService = mock(PeliasApiServiceImpl.class);
 
-    private final TravelPointApiService classUnderTest = new TravelPointApiServiceImpl(requestTokenHandlerService, exceptionHandlerService, peliasApiToken, peliasApiService);
+    private final TravelPointApiService classUnderTest = new TravelPointApiServiceImpl(requestTokenHandlerService, exceptionHandlerService, peliasApiService, peliasAutocompleteApiToken, peliasNearestAddressesApiToken);
 
     @BeforeEach
     void init() {
