@@ -22,8 +22,8 @@ public class StationPersistenceApiConfiguration {
     private int stationPersistencePort;
     @Value("${stationpersistence.get.box.path}")
     private String stationPersistenceBoxPath;
-    @Value("${stationpersistence.retry.time.seconds}")
-    private long retryTimeInSeconds;
+    @Value("${stationpersistence.get.box.retryTimeInMilliseconds}")
+    private Long retryTimeInMilliseconds;
 
     @RefreshScope
     @Bean
@@ -34,7 +34,7 @@ public class StationPersistenceApiConfiguration {
         apiToken.setHost(stationPersistenceHost);
         apiToken.setPort(stationPersistencePort);
         apiToken.setPath(stationPersistenceBoxPath);
-        apiToken.setRetryTimeInSeconds(retryTimeInSeconds);
+        apiToken.setRetryTimeInMilliseconds(retryTimeInMilliseconds);
 
         return apiToken;
     }
