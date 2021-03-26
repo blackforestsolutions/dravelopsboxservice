@@ -24,130 +24,130 @@ class PeliasHttpCallBuilderServiceTest {
 
     @Test
     void test_buildPeliasAutocompletePathWith_apiToken_and_apiVersion_as_null_throws_exception() {
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(getPeliasAutocompleteApiToken());
+        ApiToken testData = new ApiToken(getPeliasAutocompleteApiToken());
         testData.setApiVersion(null);
 
-        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasAutocompletePathWith(testData.build()));
+        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasAutocompletePathWith(testData));
     }
 
     @Test
     void test_buildPeliasAutocompletePathWith_apiToken_and_departure_as_null_throws_exception() {
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(getPeliasAutocompleteApiToken());
+        ApiToken testData = new ApiToken(getPeliasAutocompleteApiToken());
         testData.setDeparture(null);
 
-        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasAutocompletePathWith(testData.build()));
+        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasAutocompletePathWith(testData));
     }
 
     @Test
     void test_buildPeliasAutocompletePathWith_apiToken_and_maxResults_as_null_throws_exception() {
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(getPeliasAutocompleteApiToken());
+        ApiToken testData = new ApiToken(getPeliasAutocompleteApiToken());
         testData.setMaxResults(null);
 
-        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasAutocompletePathWith(testData.build()));
+        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasAutocompletePathWith(testData));
     }
 
     @Test
     void test_buildPeliasAutocompletePathWith_apiToken_and_language_as_null_throws_exception() {
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(getPeliasAutocompleteApiToken());
+        ApiToken testData = new ApiToken(getPeliasAutocompleteApiToken());
         testData.setLanguage(null);
 
-        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasAutocompletePathWith(testData.build()));
+        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasAutocompletePathWith(testData));
     }
 
     @Test
     void test_buildPeliasAutocompletePathWith_apiToken_and_box_as_null_throws_exception() {
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(getPeliasAutocompleteApiToken());
+        ApiToken testData = new ApiToken(getPeliasAutocompleteApiToken());
         testData.setBox(null);
 
-        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasAutocompletePathWith(testData.build()));
+        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasAutocompletePathWith(testData));
     }
 
     @Test
     void test_buildPeliasAutocompletePathWith_apiToken_and_layers_as_null_throws_exception() {
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(getPeliasAutocompleteApiToken());
+        ApiToken testData = new ApiToken(getPeliasAutocompleteApiToken());
         testData.setLayers(null);
 
-        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasAutocompletePathWith(testData.build()));
+        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasAutocompletePathWith(testData));
     }
 
     @Test
     void test_buildPeliasAutocompletePathWith_apiToken_and_topLeft_box_point_as_null_throws_exception() {
-        Box.BoxBuilder testBox = new Box.BoxBuilder(null, getPeliasAutocompleteApiToken().getBox().getBottomRight());
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(getPeliasAutocompleteApiToken());
-        testData.setBox(testBox.build());
+        Box testBox = new Box.BoxBuilder(null, getPeliasAutocompleteApiToken().getBox().getBottomRight()).build();
+        ApiToken testData = new ApiToken(getPeliasAutocompleteApiToken());
+        testData.setBox(testBox);
 
-        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasAutocompletePathWith(testData.build()));
+        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasAutocompletePathWith(testData));
     }
 
     @Test
     void test_buildPeliasAutocompletePathWith_apiToken_and_rightBottom_box_point_as_null_throws_exception() {
-        Box.BoxBuilder testBox = new Box.BoxBuilder(getPeliasAutocompleteApiToken().getBox().getTopLeft(), null);
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(getPeliasAutocompleteApiToken());
-        testData.setBox(testBox.build());
+        Box testBox = new Box.BoxBuilder(getPeliasAutocompleteApiToken().getBox().getTopLeft(), null).build();
+        ApiToken testData = new ApiToken(getPeliasAutocompleteApiToken());
+        testData.setBox(testBox);
 
-        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasAutocompletePathWith(testData.build()));
+        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasAutocompletePathWith(testData));
     }
 
     @Test
     void test_buildPeliasReversePathWith_apiToken_returns_valid_path() {
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(getPeliasNearestAddressesApiToken());
+        ApiToken testData = new ApiToken(getPeliasNearestAddressesApiToken());
         testData.setArrivalCoordinate(new Point.PointBuilder(7.891595d, 48.087517d).build());
 
-        String result = classUnderTest.buildPeliasReversePathWith(testData.build());
+        String result = classUnderTest.buildPeliasReversePathWith(testData);
 
         assertThat(result).isEqualTo("/v1/reverse?point.lat=48.087517&point.lon=7.891595&size=10&lang=de&layers=venue,address,street,country,macroregion,region,macrocounty,county,locality,localadmin,borough,neighbourhood,coarse,postalcode&boundary.circle.radius=1.0");
     }
 
     @Test
     void test_buildPeliasReversePathWith_apiToken_and_arrivalCoordinate_as_null_throws_exception() {
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(getPeliasNearestAddressesApiToken());
+        ApiToken testData = new ApiToken(getPeliasNearestAddressesApiToken());
         testData.setArrivalCoordinate(null);
 
-        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasReversePathWith(testData.build()));
+        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasReversePathWith(testData));
     }
 
     @Test
     void test_buildPeliasReversePathWith_apiToken_and_apiVersion_as_null_throws_exception() {
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(getPeliasNearestAddressesApiToken());
+        ApiToken testData = new ApiToken(getPeliasNearestAddressesApiToken());
         testData.setArrivalCoordinate(new Point.PointBuilder(7.891595d, 48.087517d).build());
         testData.setApiVersion(null);
 
-        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasReversePathWith(testData.build()));
+        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasReversePathWith(testData));
     }
 
     @Test
     void test_buildPeliasReversePathWith_apiToken_and_maxResults_as_null_throws_exception() {
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(getPeliasNearestAddressesApiToken());
+        ApiToken testData = new ApiToken(getPeliasNearestAddressesApiToken());
         testData.setArrivalCoordinate(new Point.PointBuilder(7.891595d, 48.087517d).build());
         testData.setMaxResults(null);
 
-        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasReversePathWith(testData.build()));
+        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasReversePathWith(testData));
     }
 
     @Test
     void test_buildPeliasReversePathWith_apiToken_and_language_as_null_throws_exception() {
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(getPeliasNearestAddressesApiToken());
+        ApiToken testData = new ApiToken(getPeliasNearestAddressesApiToken());
         testData.setArrivalCoordinate(new Point.PointBuilder(7.891595d, 48.087517d).build());
         testData.setLanguage(null);
 
-        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasReversePathWith(testData.build()));
+        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasReversePathWith(testData));
     }
 
     @Test
     void test_buildPeliasReversePathWith_apiToken_and_layers_as_null_throws_exception() {
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(getPeliasNearestAddressesApiToken());
+        ApiToken testData = new ApiToken(getPeliasNearestAddressesApiToken());
         testData.setArrivalCoordinate(new Point.PointBuilder(7.891595d, 48.087517d).build());
         testData.setLayers(null);
 
-        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasReversePathWith(testData.build()));
+        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasReversePathWith(testData));
     }
 
     @Test
     void test_buildPeliasReversePathWith_apiToken_and_radiusInKilometers_as_null_throws_exception() {
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(getPeliasNearestAddressesApiToken());
+        ApiToken testData = new ApiToken(getPeliasNearestAddressesApiToken());
         testData.setArrivalCoordinate(new Point.PointBuilder(7.891595d, 48.087517d).build());
         testData.setRadiusInKilometers(null);
 
-        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasReversePathWith(testData.build()));
+        assertThrows(NullPointerException.class, () -> classUnderTest.buildPeliasReversePathWith(testData));
     }
 }

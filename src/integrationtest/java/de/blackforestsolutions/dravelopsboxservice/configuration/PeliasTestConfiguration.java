@@ -15,8 +15,9 @@ public class PeliasTestConfiguration {
 
     @Bean
     @ConfigurationProperties(prefix = "pelias")
-    public ApiToken.ApiTokenBuilder peliasTestApiToken(@Autowired ApiToken travelPointApiToken) {
-        return new ApiToken.ApiTokenBuilder(travelPointApiToken)
-                .setBox(getBoxServiceStartBox());
+    public ApiToken peliasTestApiToken(@Autowired ApiToken travelPointApiToken) {
+        ApiToken apiToken = new ApiToken(travelPointApiToken);
+        apiToken.setBox(getBoxServiceStartBox());
+        return apiToken;
     }
 }

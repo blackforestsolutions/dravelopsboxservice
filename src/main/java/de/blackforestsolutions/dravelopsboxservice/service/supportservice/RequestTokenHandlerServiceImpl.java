@@ -29,20 +29,24 @@ public class RequestTokenHandlerServiceImpl implements RequestTokenHandlerServic
 
     @Override
     public ApiToken getAutocompleteApiTokenWith(ApiToken requestApiToken, ApiToken configuredPeliasApiToken) {
-        return new ApiToken.ApiTokenBuilder(configuredPeliasApiToken)
-                .setLanguage(requestApiToken.getLanguage())
-                .setDeparture(requestApiToken.getDeparture())
-                .setBox(stationPersistenceBox)
-                .build();
+        ApiToken autocompleteApiToken = new ApiToken(configuredPeliasApiToken);
+
+        autocompleteApiToken.setLanguage(requestApiToken.getLanguage());
+        autocompleteApiToken.setDeparture(requestApiToken.getDeparture());
+        autocompleteApiToken.setBox(stationPersistenceBox);
+
+        return autocompleteApiToken;
     }
 
     @Override
     public ApiToken getNearestAddressesApiTokenWith(ApiToken requestApiToken, ApiToken configuredPeliasApiToken) {
-        return new ApiToken.ApiTokenBuilder(configuredPeliasApiToken)
-                .setArrivalCoordinate(requestApiToken.getArrivalCoordinate())
-                .setRadiusInKilometers(requestApiToken.getRadiusInKilometers())
-                .setLanguage(requestApiToken.getLanguage())
-                .build();
+        ApiToken nearestAddressesApiToken = new ApiToken(configuredPeliasApiToken);
+
+        nearestAddressesApiToken.setArrivalCoordinate(requestApiToken.getArrivalCoordinate());
+        nearestAddressesApiToken.setRadiusInKilometers(requestApiToken.getRadiusInKilometers());
+        nearestAddressesApiToken.setLanguage(requestApiToken.getLanguage());
+
+        return nearestAddressesApiToken;
     }
 
     @Override

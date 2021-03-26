@@ -33,14 +33,14 @@ public class PeliasCallServiceIT {
     private CallService callService;
 
     @Autowired
-    private ApiToken.ApiTokenBuilder peliasTestApiToken;
+    private ApiToken peliasTestApiToken;
 
     @Test
     void test_peliasAutocompleteCall_returns_more_than_one_results_and_correct_query_params() {
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(peliasTestApiToken.build());
-        testData.setPath(peliasHttpCallBuilderService.buildPeliasAutocompletePathWith(testData.build()));
+        ApiToken testData = new ApiToken(peliasTestApiToken);
+        testData.setPath(peliasHttpCallBuilderService.buildPeliasAutocompletePathWith(testData));
 
-        Mono<PeliasTravelPointResponse> result = callService.getOne(buildUrlWith(testData.build()).toString(), HttpHeaders.EMPTY, PeliasTravelPointResponse.class);
+        Mono<PeliasTravelPointResponse> result = callService.getOne(buildUrlWith(testData).toString(), HttpHeaders.EMPTY, PeliasTravelPointResponse.class);
 
         StepVerifier.create(result)
                 .assertNext(peliasTravelPointResponse -> {
@@ -55,11 +55,11 @@ public class PeliasCallServiceIT {
 
     @Test
     void test_peliasAutocompleteCall_returns_no_result_with_unknown_search_text() {
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(peliasTestApiToken);
+        ApiToken testData = new ApiToken(peliasTestApiToken);
         testData.setDeparture("Noooooooooooooo expected Result");
-        testData.setPath(peliasHttpCallBuilderService.buildPeliasAutocompletePathWith(testData.build()));
+        testData.setPath(peliasHttpCallBuilderService.buildPeliasAutocompletePathWith(testData));
 
-        Mono<PeliasTravelPointResponse> result = callService.getOne(buildUrlWith(testData.build()).toString(), HttpHeaders.EMPTY, PeliasTravelPointResponse.class);
+        Mono<PeliasTravelPointResponse> result = callService.getOne(buildUrlWith(testData).toString(), HttpHeaders.EMPTY, PeliasTravelPointResponse.class);
 
         StepVerifier.create(result)
                 .assertNext(peliasTravelPointResponse -> {
@@ -74,10 +74,10 @@ public class PeliasCallServiceIT {
 
     @Test
     void test_peliasReverseCall_returns_more_than_one_results_and_correct_query_params() {
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(peliasTestApiToken);
-        testData.setPath(peliasHttpCallBuilderService.buildPeliasReversePathWith(peliasTestApiToken.build()));
+        ApiToken testData = new ApiToken(peliasTestApiToken);
+        testData.setPath(peliasHttpCallBuilderService.buildPeliasReversePathWith(peliasTestApiToken));
 
-        Mono<PeliasTravelPointResponse> result = callService.getOne(buildUrlWith(testData.build()).toString(), HttpHeaders.EMPTY, PeliasTravelPointResponse.class);
+        Mono<PeliasTravelPointResponse> result = callService.getOne(buildUrlWith(testData).toString(), HttpHeaders.EMPTY, PeliasTravelPointResponse.class);
 
         StepVerifier.create(result)
                 .assertNext(peliasTravelPointResponse -> {
@@ -93,12 +93,12 @@ public class PeliasCallServiceIT {
 
     @Test
     void test_peliasReverseCall_returns_no_result_with_unknown_coordinates() {
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(peliasTestApiToken);
+        ApiToken testData = new ApiToken(peliasTestApiToken);
         testData.setArrivalCoordinate(new Point.PointBuilder(0.0d, 0.0d).build());
         testData.setRadiusInKilometers(new Distance(1.0d, Metrics.KILOMETERS));
-        testData.setPath(peliasHttpCallBuilderService.buildPeliasReversePathWith(testData.build()));
+        testData.setPath(peliasHttpCallBuilderService.buildPeliasReversePathWith(testData));
 
-        Mono<PeliasTravelPointResponse> result = callService.getOne(buildUrlWith(testData.build()).toString(), HttpHeaders.EMPTY, PeliasTravelPointResponse.class);
+        Mono<PeliasTravelPointResponse> result = callService.getOne(buildUrlWith(testData).toString(), HttpHeaders.EMPTY, PeliasTravelPointResponse.class);
 
         StepVerifier.create(result)
                 .assertNext(peliasTravelPointResponse -> {
@@ -115,10 +115,10 @@ public class PeliasCallServiceIT {
     @Test
     void test_peliasReverseCall_with_wrong_path() {
         String testUrl = "wrongPath";
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(peliasTestApiToken);
+        ApiToken testData = new ApiToken(peliasTestApiToken);
         testData.setPath(testUrl);
 
-        Mono<PeliasTravelPointResponse> result = callService.getOne(buildUrlWith(testData.build()).toString(), HttpHeaders.EMPTY, PeliasTravelPointResponse.class);
+        Mono<PeliasTravelPointResponse> result = callService.getOne(buildUrlWith(testData).toString(), HttpHeaders.EMPTY, PeliasTravelPointResponse.class);
 
         StepVerifier.create(result)
                 .expectError(WebClientResponseException.class)

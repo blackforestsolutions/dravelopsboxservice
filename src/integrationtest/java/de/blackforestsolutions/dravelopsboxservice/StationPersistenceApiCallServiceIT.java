@@ -30,11 +30,11 @@ class StationPersistenceApiCallServiceIT {
     private CallService classUnderTest;
 
     @Autowired
-    private ApiToken.ApiTokenBuilder stationPersistenceBoxApiTokenIT;
+    private ApiToken stationPersistenceBoxApiTokenIT;
 
     @Test
     void test_getOneReactive_box_returns_a_correct_box() {
-        ApiToken testData = stationPersistenceBoxApiTokenIT.build();
+        ApiToken testData = new ApiToken(stationPersistenceBoxApiTokenIT);
 
         Mono<Box> result = classUnderTest.getOneReactive(buildUrlWith(testData).toString(), HttpHeaders.EMPTY, Box.class);
 

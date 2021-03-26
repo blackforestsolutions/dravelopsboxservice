@@ -3,10 +3,12 @@ package de.blackforestsolutions.dravelopsboxservice.configuration;
 import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 
 import java.util.List;
 
+@RefreshScope
 @SpringBootConfiguration
 public class PeliasConfiguration {
 
@@ -24,15 +26,18 @@ public class PeliasConfiguration {
     private List<String> layers;
 
 
-    @Bean(name = "peliasApiToken")
-    public ApiToken apiToken() {
-        return new ApiToken.ApiTokenBuilder()
-                .setProtocol(protocol)
-                .setHost(host)
-                .setPort(port)
-                .setApiVersion(apiVersion)
-                .setMaxResults(maxResults)
-                .setLayers(layers)
-                .build();
+    @RefreshScope
+    @Bean
+    public ApiToken peliasApiToken() {
+        ApiToken apiToken = new ApiToken();
+
+        apiToken.setProtocol(protocol);
+        apiToken.setHost(host);
+        apiToken.setPort(port);
+        apiToken.setApiVersion(apiVersion);
+        apiToken.setMaxResults(maxResults);
+        apiToken.setLayers(layers);
+
+        return apiToken;
     }
 }

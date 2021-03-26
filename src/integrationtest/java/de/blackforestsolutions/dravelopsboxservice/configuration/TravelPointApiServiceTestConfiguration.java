@@ -27,11 +27,13 @@ public class TravelPointApiServiceTestConfiguration {
 
     @Bean
     public ApiToken travelPointApiToken() {
-        return new ApiToken.ApiTokenBuilder()
-                .setDeparture(text)
-                .setLanguage(language)
-                .setArrivalCoordinate(new Point.PointBuilder(longitude, latitude).build())
-                .setRadiusInKilometers(new Distance(radiusInKilometers, Metrics.KILOMETERS))
-                .build();
+        ApiToken apiToken = new ApiToken();
+
+        apiToken.setDeparture(text);
+        apiToken.setLanguage(language);
+        apiToken.setArrivalCoordinate(new Point.PointBuilder(longitude, latitude).build());
+        apiToken.setRadiusInKilometers(new Distance(radiusInKilometers, Metrics.KILOMETERS));
+
+        return apiToken;
     }
 }

@@ -19,11 +19,14 @@ public class StationPersistenceApiTestConfiguration {
 
 
     @Bean
-    public ApiToken.ApiTokenBuilder stationPersistenceBoxApiTokenIT() {
-        return new ApiToken.ApiTokenBuilder()
-                .setProtocol(protocol)
-                .setHost(host)
-                .setPort(port)
-                .setPath(stationPersistenceBoxPath);
+    public ApiToken stationPersistenceBoxApiTokenIT() {
+        ApiToken apiToken = new ApiToken();
+
+        apiToken.setProtocol(protocol);
+        apiToken.setHost(host);
+        apiToken.setPort(port);
+        apiToken.setPath(stationPersistenceBoxPath);
+
+        return apiToken;
     }
 }
