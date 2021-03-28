@@ -72,10 +72,10 @@ class BackendApiServiceTest {
     @Test
     void test_getOneBy_configured_apiToken_and_host_as_null_returns_no_box_when_exception_is_thrown() {
         ArgumentCaptor<Throwable> exceptionArg = ArgumentCaptor.forClass(Throwable.class);
-        ApiToken.ApiTokenBuilder configuredTestToken = new ApiToken.ApiTokenBuilder(getConfiguredBoxPersistenceApiToken());
+        ApiToken configuredTestToken = new ApiToken(getConfiguredBoxPersistenceApiToken());
         configuredTestToken.setHost(null);
 
-        Mono<Box> result = classUnderTest.getOneBy(configuredTestToken.build(), Box.class);
+        Mono<Box> result = classUnderTest.getOneBy(configuredTestToken, Box.class);
 
         StepVerifier.create(result)
                 .expectNextCount(0L)

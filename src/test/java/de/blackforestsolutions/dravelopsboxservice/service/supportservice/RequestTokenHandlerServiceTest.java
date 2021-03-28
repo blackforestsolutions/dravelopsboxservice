@@ -9,8 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 import reactor.core.publisher.Mono;
 
-import java.util.concurrent.TimeUnit;
-
 import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.ApiTokenObjectMother.*;
 import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.BoxObjectMother.getBoxServiceStartBox;
 import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.BoxObjectMother.getStationPersistenceBox;
@@ -18,8 +16,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 class RequestTokenHandlerServiceTest {
-
-    private static final long ASYNC_DELAY = 1L;
 
     private final Box stationPersistenceBox = getBoxServiceStartBox();
     private final ApiToken configuredBoxPersistenceApiToken = getConfiguredBoxPersistenceApiToken();
@@ -38,59 +34,37 @@ class RequestTokenHandlerServiceTest {
                 .untilAsserted(() -> {
                     Box stationPersistenceBox = (Box) ReflectionTestUtils.getField(classUnderTest, "stationPersistenceBox");
                     assertThat(stationPersistenceBox).isEqualToComparingFieldByFieldRecursively(getStationPersistenceBox());
+                    verify(backendApiService, times(1)).getOneBy(any(ApiToken.class), eq(Box.class));
                 });
     }
 
     @Test
-    void test_updateStationPersistenceBox_updates_not_box_when_error_is_thrown() {
+    void test_updateStationPersistenceBox_does_not_update_box_when_empty_result_is_given_back() {
         when(backendApiService.getOneBy(any(ApiToken.class), eq(Box.class)))
-                .thenReturn(Mono.error(new Exception()))
-                .thenReturn(Mono.just(getStationPersistenceBox()));
+                .thenReturn(Mono.empty());
 
         classUnderTest.updateStationPersistenceBox();
 
         Awaitility.await()
-                .atMost(configuredBoxPersistenceApiToken.getRetryTimeInSeconds() + ASYNC_DELAY, TimeUnit.SECONDS)
                 .untilAsserted(() -> {
                     Box stationPersistenceBox = (Box) ReflectionTestUtils.getField(classUnderTest, "stationPersistenceBox");
-                    assertThat(stationPersistenceBox).isEqualToComparingFieldByFieldRecursively(getStationPersistenceBox());
-                    verify(backendApiService, times(2)).getOneBy(any(ApiToken.class), eq(Box.class));
+                    assertThat(stationPersistenceBox).isEqualToComparingFieldByFieldRecursively(getBoxServiceStartBox());
+                    verify(backendApiService, times(1)).getOneBy(any(ApiToken.class), eq(Box.class));
                 });
     }
 
     @Test
-    void test_updateStationPersistenceBox_updates_not_box_when_empty_result_is_given_back() {
+    void test_updateStationPersistenceBox_does_not_update_box_when_error_result_is_given_back() {
         when(backendApiService.getOneBy(any(ApiToken.class), eq(Box.class)))
-                .thenReturn(Mono.empty())
-                .thenReturn(Mono.just(getStationPersistenceBox()));
+                .thenReturn(Mono.error(new Exception()));
 
         classUnderTest.updateStationPersistenceBox();
 
         Awaitility.await()
-                .atMost(configuredBoxPersistenceApiToken.getRetryTimeInSeconds() + ASYNC_DELAY, TimeUnit.SECONDS)
                 .untilAsserted(() -> {
                     Box stationPersistenceBox = (Box) ReflectionTestUtils.getField(classUnderTest, "stationPersistenceBox");
-                    assertThat(stationPersistenceBox).isEqualToComparingFieldByFieldRecursively(getStationPersistenceBox());
-                    verify(backendApiService, times(2)).getOneBy(any(ApiToken.class), eq(Box.class));
-                });
-    }
-
-    @Test
-    void test_updateStationPersistenceBox_updates_box_after_three_and_one_right_backend_result() {
-        when(backendApiService.getOneBy(any(ApiToken.class), eq(Box.class)))
-                .thenReturn(Mono.empty())
-                .thenReturn(Mono.empty())
-                .thenReturn(Mono.error(new Exception()))
-                .thenReturn(Mono.just(getStationPersistenceBox()));
-
-        classUnderTest.updateStationPersistenceBox();
-
-        Awaitility.await()
-                .atMost(configuredBoxPersistenceApiToken.getRetryTimeInSeconds() * 3 + ASYNC_DELAY, TimeUnit.SECONDS)
-                .untilAsserted(() -> {
-                    Box stationPersistenceBox = (Box) ReflectionTestUtils.getField(classUnderTest, "stationPersistenceBox");
-                    assertThat(stationPersistenceBox).isEqualToComparingFieldByFieldRecursively(getStationPersistenceBox());
-                    verify(backendApiService, times(4)).getOneBy(any(ApiToken.class), eq(Box.class));
+                    assertThat(stationPersistenceBox).isEqualToComparingFieldByFieldRecursively(getBoxServiceStartBox());
+                    verify(backendApiService, times(1)).getOneBy(any(ApiToken.class), eq(Box.class));
                 });
     }
 

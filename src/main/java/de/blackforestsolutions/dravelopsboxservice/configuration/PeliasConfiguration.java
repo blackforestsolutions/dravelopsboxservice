@@ -3,10 +3,12 @@ package de.blackforestsolutions.dravelopsboxservice.configuration;
 import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 
 import java.util.List;
 
+@RefreshScope
 @SpringBootConfiguration
 public class PeliasConfiguration {
 
@@ -28,27 +30,28 @@ public class PeliasConfiguration {
     private List<String> nearestAddressesLayers;
 
 
+    @RefreshScope
     @Bean
     public ApiToken peliasAutocompleteApiToken() {
-        return new ApiToken.ApiTokenBuilder()
-                .setProtocol(protocol)
-                .setHost(host)
-                .setPort(port)
-                .setApiVersion(apiVersion)
-                .setMaxResults(autocompleteMaxResults)
-                .setLayers(autocompleteLayers)
-                .build();
+        return buildApiTokenBy(autocompleteMaxResults, autocompleteLayers);
     }
 
+    @RefreshScope
     @Bean
     public ApiToken peliasNearestAddressesApiToken() {
-        return new ApiToken.ApiTokenBuilder()
-                .setProtocol(protocol)
-                .setHost(host)
-                .setPort(port)
-                .setApiVersion(apiVersion)
-                .setMaxResults(nearestAddressesMaxResults)
-                .setLayers(nearestAddressesLayers)
-                .build();
+        return buildApiTokenBy(nearestAddressesMaxResults, nearestAddressesLayers);
+    }
+
+    private ApiToken buildApiTokenBy(int maxResults, List<String> layers) {
+        ApiToken apiToken = new ApiToken();
+
+        apiToken.setProtocol(protocol);
+        apiToken.setHost(host);
+        apiToken.setPort(port);
+        apiToken.setApiVersion(apiVersion);
+        apiToken.setMaxResults(maxResults);
+        apiToken.setLayers(layers);
+
+        return apiToken;
     }
 }

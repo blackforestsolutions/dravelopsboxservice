@@ -134,10 +134,10 @@ class PeliasApiServiceTest {
 
     @Test
     void test_getAutocompleteAddressesFrom_apiToken_with_host_as_null_returns_failed_call_status() {
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(getPeliasAutocompleteApiToken());
+        ApiToken testData = new ApiToken(getPeliasAutocompleteApiToken());
         testData.setHost(null);
 
-        Flux<CallStatus<TravelPoint>> result = classUnderTest.getAutocompleteAddressesFrom(testData.build());
+        Flux<CallStatus<TravelPoint>> result = classUnderTest.getAutocompleteAddressesFrom(testData);
 
         StepVerifier.create(result)
                 .assertNext(error -> {
@@ -150,10 +150,10 @@ class PeliasApiServiceTest {
 
     @Test
     void test_getNearestAddressesFrom_apiToken_with_host_as_null_returns_failed_call_status() {
-        ApiToken.ApiTokenBuilder testData = new ApiToken.ApiTokenBuilder(getPeliasNearestAddressesApiToken());
+        ApiToken testData = new ApiToken(getPeliasNearestAddressesApiToken());
         testData.setHost(null);
 
-        Flux<CallStatus<TravelPoint>> result = classUnderTest.getNearestAddressesFrom(testData.build());
+        Flux<CallStatus<TravelPoint>> result = classUnderTest.getNearestAddressesFrom(testData);
 
         StepVerifier.create(result)
                 .assertNext(error -> {

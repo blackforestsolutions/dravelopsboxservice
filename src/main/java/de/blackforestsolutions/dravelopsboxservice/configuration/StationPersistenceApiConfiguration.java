@@ -4,11 +4,13 @@ import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
 import de.blackforestsolutions.dravelopsdatamodel.Box;
 import de.blackforestsolutions.dravelopsdatamodel.Point;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import static de.blackforestsolutions.dravelopsboxservice.configuration.GeocodingConfiguration.*;
 
+@RefreshScope
 @Configuration
 public class StationPersistenceApiConfiguration {
 
@@ -20,18 +22,21 @@ public class StationPersistenceApiConfiguration {
     private int stationPersistencePort;
     @Value("${stationpersistence.get.box.path}")
     private String stationPersistenceBoxPath;
-    @Value("${stationpersistence.retry.time.seconds}")
-    private long retryTimeInSeconds;
+    @Value("${stationpersistence.get.box.retryTimeInMilliseconds}")
+    private Long retryTimeInMilliseconds;
 
+    @RefreshScope
     @Bean
     public ApiToken stationPersistenceBoxApiToken() {
-        return new ApiToken.ApiTokenBuilder()
-                .setProtocol(stationPersistenceProtocol)
-                .setHost(stationPersistenceHost)
-                .setPort(stationPersistencePort)
-                .setPath(stationPersistenceBoxPath)
-                .setRetryTimeInSeconds(retryTimeInSeconds)
-                .build();
+        ApiToken apiToken = new ApiToken();
+
+        apiToken.setProtocol(stationPersistenceProtocol);
+        apiToken.setHost(stationPersistenceHost);
+        apiToken.setPort(stationPersistencePort);
+        apiToken.setPath(stationPersistenceBoxPath);
+        apiToken.setRetryTimeInMilliseconds(retryTimeInMilliseconds);
+
+        return apiToken;
     }
 
     @Bean

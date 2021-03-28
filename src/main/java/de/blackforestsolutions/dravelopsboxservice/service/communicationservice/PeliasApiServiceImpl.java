@@ -75,16 +75,16 @@ public class PeliasApiServiceImpl implements PeliasApiService {
     }
 
     private String getAutocompleteRequestString(ApiToken apiToken) {
-        ApiToken.ApiTokenBuilder builder = new ApiToken.ApiTokenBuilder(apiToken);
+        ApiToken builder = new ApiToken(apiToken);
         builder.setPath(peliasHttpCallBuilderService.buildPeliasAutocompletePathWith(apiToken));
-        URL requestUrl = buildUrlWith(builder.build());
+        URL requestUrl = buildUrlWith(builder);
         return requestUrl.toString();
     }
 
     private String getReverseRequestString(ApiToken apiToken) {
-        ApiToken.ApiTokenBuilder builder = new ApiToken.ApiTokenBuilder(apiToken);
+        ApiToken builder = new ApiToken(apiToken);
         builder.setPath(peliasHttpCallBuilderService.buildPeliasReversePathWith(apiToken));
-        URL requestUrl = buildUrlWith(builder.build());
+        URL requestUrl = buildUrlWith(builder);
         return requestUrl.toString();
     }
 
