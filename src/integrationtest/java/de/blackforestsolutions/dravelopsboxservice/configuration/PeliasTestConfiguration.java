@@ -16,13 +16,13 @@ import static de.blackforestsolutions.dravelopsdatamodel.objectmothers.BoxObject
 @Import(TravelPointApiServiceTestConfiguration.class)
 public class PeliasTestConfiguration {
 
-    @Value("${graphql.playground.tabs[2].maxResults}")
+    @Value("${graphql.playground.tabs.ADDRESS_AUTOCOMPLETION.maxResults}")
     private int autocompleteMaxResults;
-    @Value("${graphql.playground.tabs[2].layers}")
+    @Value("${graphql.playground.tabs.ADDRESS_AUTOCOMPLETION.layers}")
     private List<String> autocompleteLayers;
-    @Value("${graphql.playground.tabs[3].maxResults}")
+    @Value("${graphql.playground.tabs.NEAREST_ADDRESSES.maxResults}")
     private int nearestAddressesMaxResults;
-    @Value("${graphql.playground.tabs[3].layers}")
+    @Value("${graphql.playground.tabs.NEAREST_ADDRESSES.layers}")
     private List<String> nearestAddressesLayers;
 
     @Bean
