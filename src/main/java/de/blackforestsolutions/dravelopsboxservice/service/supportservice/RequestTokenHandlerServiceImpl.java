@@ -3,6 +3,7 @@ package de.blackforestsolutions.dravelopsboxservice.service.supportservice;
 import de.blackforestsolutions.dravelopsboxservice.service.communicationservice.BackendApiService;
 import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
 import de.blackforestsolutions.dravelopsdatamodel.Box;
+import de.blackforestsolutions.dravelopsdatamodel.exception.NoResultFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -54,29 +55,24 @@ public class RequestTokenHandlerServiceImpl implements RequestTokenHandlerServic
     @Override
     @Scheduled(fixedRateString = "${stationpersistence.get.box.retryTimeInMilliseconds}")
     public void updateStationPersistenceBox() {
-        log.info("Trying to get box from StationPersistenceApi:");
+        log.info("Trying to get box from StationPersistenceApi!");
         Mono.defer(() -> backendApiService.getOneBy(stationPersistenceBoxApiToken, Box.class))
-                .switchIfEmpty(logNoBoxResultWith(stationPersistenceBoxApiToken))
-                .onErrorResume(this::handleError)
+                .switchIfEmpty(Mono.error(new NoResultFoundException()))
+                .onErrorResume(error -> logBoxUpdateError())
                 .subscribe(this::handleBoxResult);
     }
 
-    private Mono<Box> logNoBoxResultWith(ApiToken apiToken) {
-        Objects.requireNonNull(apiToken.getRetryTimeInMilliseconds(), "retryTimeInMilliseconds is not allowed to be null");
+    private Mono<Box> logBoxUpdateError() {
+        Objects.requireNonNull(stationPersistenceBoxApiToken.getRetryTimeInMilliseconds(), "retryTimeInMilliseconds is not allowed to be null");
 
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(apiToken.getRetryTimeInMilliseconds());
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(stationPersistenceBoxApiToken.getRetryTimeInMilliseconds());
         log.warn("Trying to update box failed! Next try is in: ".concat(String.valueOf(seconds)).concat(" seconds"));
 
         return Mono.empty();
     }
 
-    private Mono<Box> handleError(Throwable exception) {
-        log.error("Error while updating the box: ", exception);
-        return Mono.empty();
-    }
-
     private void handleBoxResult(Box stationPersistenceBox) {
         this.stationPersistenceBox = stationPersistenceBox;
-        log.info("Box from StationPersistenceApi was successfully updated");
+        log.info("Box from StationPersistenceApi was successfully updated.");
     }
 }
