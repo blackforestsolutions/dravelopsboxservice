@@ -24,10 +24,10 @@ public class PeliasHttpCallBuilderServiceImpl implements PeliasHttpCallBuilderSe
     private static final String BOUNDARY_BOX_MIN_LATITUDE_PARAM = "boundary.rect.min_lat";
     private static final String BOUNDARY_BOX_MAX_LATITUDE_PARAM = "boundary.rect.max_lat";
     private static final String LAYERS_PARAM = "layers";
-    private static final String LAYERS_VENUE_PARAM = "venue";
-    private static final String LAYERS_ADDRESS_PARAM = "address";
-    private static final String LAYERS_STREET_PARAM = "street";
-    private static final String LAYERS_LOCALITY_PARAM = "locality";
+    private static final String LAYERS_VENUE_PARAM_VALUE = "venue";
+    private static final String LAYERS_ADDRESS_PARAM_VALUE = "address";
+    private static final String LAYERS_STREET_PARAM_VALUE = "street";
+    private static final String LAYERS_LOCALITY_PARAM_VALUE = "locality";
     private static final String LATITUDE_PARAM = "point.lat";
     private static final String LONGITUDE_PARAM = "point.lon";
     private static final String RADIUS_PARAM = "boundary.circle.radius";
@@ -133,16 +133,16 @@ public class PeliasHttpCallBuilderServiceImpl implements PeliasHttpCallBuilderSe
 
     private String getLayerParamBy(Map.Entry<Layer, Boolean> layer) {
         if (layer.getKey().equals(Layer.HAS_VENUE) && layer.getValue()) {
-            return LAYERS_VENUE_PARAM;
+            return LAYERS_VENUE_PARAM_VALUE;
         }
         if (layer.getKey().equals(Layer.HAS_ADDRESS) && layer.getValue()) {
-            return LAYERS_ADDRESS_PARAM;
+            return LAYERS_ADDRESS_PARAM_VALUE;
         }
         if (layer.getKey().equals(Layer.HAS_LOCALITY) && layer.getValue()) {
-            return LAYERS_LOCALITY_PARAM;
+            return LAYERS_LOCALITY_PARAM_VALUE;
         }
         if (layer.getKey().equals(Layer.HAS_STREET) && layer.getValue()) {
-            return LAYERS_STREET_PARAM;
+            return LAYERS_STREET_PARAM_VALUE;
         }
         return "";
     }
