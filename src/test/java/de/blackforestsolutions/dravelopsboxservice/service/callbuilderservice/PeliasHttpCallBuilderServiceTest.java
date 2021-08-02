@@ -27,7 +27,7 @@ class PeliasHttpCallBuilderServiceTest {
     }
 
     @Test
-    void test_buildPeliasAutocompletePathWith_apiToken_and_layers_hasVanue_as_false_returns_path_without_venue() {
+    void test_buildPeliasAutocompletePathWith_apiToken_and_layers_hasVenue_as_false_returns_path_without_venue() {
         ApiToken testData = new ApiToken(getPeliasAutocompleteApiToken());
         LinkedHashMap<Layer, Boolean> layers = testData.getLayers();
         layers.put(Layer.HAS_VENUE, false);
@@ -155,7 +155,7 @@ class PeliasHttpCallBuilderServiceTest {
     }
 
     @Test
-    void test_buildPeliasReversePathWith_apiToken_and_layers_hasVanue_as_false_returns_path_without_venue() {
+    void test_buildPeliasReversePathWith_apiToken_and_layers_hasVenue_as_false_returns_path_without_venue() {
         ApiToken testData = new ApiToken(getPeliasNearestAddressesApiToken());
         LinkedHashMap<Layer, Boolean> layers = testData.getLayers();
         layers.put(Layer.HAS_VENUE, false);
