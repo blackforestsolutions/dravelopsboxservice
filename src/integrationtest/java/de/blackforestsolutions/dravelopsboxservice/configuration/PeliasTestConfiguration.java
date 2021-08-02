@@ -30,7 +30,7 @@ public class PeliasTestConfiguration {
     @Value("${graphql.playground.tabs.NEAREST_ADDRESSES.maxResults}")
     private int nearestAddressesMaxResults;
     @Value("${graphql.playground.tabs.NEAREST_ADDRESSES.layers.hasVenue}")
-    private Boolean nearestAddressesHasVenue;
+    private Boolean nearestAddressesLayerHasVenue;
     @Value("${graphql.playground.tabs.NEAREST_ADDRESSES.layers.hasAddress}")
     private Boolean nearestAddressesLayerHasAddress;
     @Value("${graphql.playground.tabs.NEAREST_ADDRESSES.layers.hasStreet}")
@@ -62,7 +62,7 @@ public class PeliasTestConfiguration {
 
         apiToken.setMaxResults(nearestAddressesMaxResults);
         apiToken.setLayers(buildLayersMapWith(
-                nearestAddressesHasVenue,
+                nearestAddressesLayerHasVenue,
                 nearestAddressesLayerHasAddress,
                 nearestAddressesLayerHasStreet,
                 nearestAddressesLayerHasLocality
