@@ -1,12 +1,17 @@
 package de.blackforestsolutions.dravelopsboxservice.service.callbuilderservice;
 
 import de.blackforestsolutions.dravelopsdatamodel.ApiToken;
+import de.blackforestsolutions.dravelopsdatamodel.Layer;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class PeliasHttpCallBuilderServiceImpl implements PeliasHttpCallBuilderService {
+
+    private static final int MAX_LAYERS_LENGTH = 0;
 
     private static final String AUTOCOMPLETE_PATH = "autocomplete";
     private static final String REVERSE_PATH = "reverse";
@@ -19,6 +24,10 @@ public class PeliasHttpCallBuilderServiceImpl implements PeliasHttpCallBuilderSe
     private static final String BOUNDARY_BOX_MIN_LATITUDE_PARAM = "boundary.rect.min_lat";
     private static final String BOUNDARY_BOX_MAX_LATITUDE_PARAM = "boundary.rect.max_lat";
     private static final String LAYERS_PARAM = "layers";
+    private static final String LAYERS_VENUE_PARAM_VALUE = "venue";
+    private static final String LAYERS_ADDRESS_PARAM_VALUE = "address";
+    private static final String LAYERS_STREET_PARAM_VALUE = "street";
+    private static final String LAYERS_LOCALITY_PARAM_VALUE = "locality";
     private static final String LATITUDE_PARAM = "point.lat";
     private static final String LONGITUDE_PARAM = "point.lon";
     private static final String RADIUS_PARAM = "boundary.circle.radius";
@@ -68,7 +77,7 @@ public class PeliasHttpCallBuilderServiceImpl implements PeliasHttpCallBuilderSe
                 .concat("&")
                 .concat(LAYERS_PARAM)
                 .concat("=")
-                .concat(String.join(",", apiToken.getLayers()));
+                .concat(buildLayersParamsWith(apiToken.getLayers()));
     }
 
     @Override
@@ -102,11 +111,40 @@ public class PeliasHttpCallBuilderServiceImpl implements PeliasHttpCallBuilderSe
                 .concat("&")
                 .concat(LAYERS_PARAM)
                 .concat("=")
-                .concat(String.join(",", apiToken.getLayers()))
+                .concat(buildLayersParamsWith(apiToken.getLayers()))
                 .concat("&")
                 .concat(RADIUS_PARAM)
                 .concat("=")
                 .concat(String.valueOf(apiToken.getRadiusInKilometers().getValue()));
+    }
+
+    private String buildLayersParamsWith(Map<Layer, Boolean> layers) {
+        Objects.requireNonNull(layers.get(Layer.HAS_VENUE), "layers hasVenue is not allowed to be null");
+        Objects.requireNonNull(layers.get(Layer.HAS_ADDRESS), "layers hasAddress is not allowed to be null");
+        Objects.requireNonNull(layers.get(Layer.HAS_LOCALITY), "layers hasLocality is not allowed to be null");
+        Objects.requireNonNull(layers.get(Layer.HAS_STREET), "layers hasStreet is not allowed to be null");
+
+        return layers.entrySet()
+                .stream()
+                .map(this::getLayerParamBy)
+                .filter(layer -> layer.length() != MAX_LAYERS_LENGTH)
+                .collect(Collectors.joining(","));
+    }
+
+    private String getLayerParamBy(Map.Entry<Layer, Boolean> layer) {
+        if (layer.getKey().equals(Layer.HAS_VENUE) && layer.getValue()) {
+            return LAYERS_VENUE_PARAM_VALUE;
+        }
+        if (layer.getKey().equals(Layer.HAS_ADDRESS) && layer.getValue()) {
+            return LAYERS_ADDRESS_PARAM_VALUE;
+        }
+        if (layer.getKey().equals(Layer.HAS_LOCALITY) && layer.getValue()) {
+            return LAYERS_LOCALITY_PARAM_VALUE;
+        }
+        if (layer.getKey().equals(Layer.HAS_STREET) && layer.getValue()) {
+            return LAYERS_STREET_PARAM_VALUE;
+        }
+        return "";
     }
 
 }
