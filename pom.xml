@@ -43,6 +43,10 @@
 
     <repositories>
         <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/blackforestsolutions/*</url>
+        </repository>
+        <repository>
             <id>spring-milestones</id>
             <name>Spring Milestones</name>
             <url>https://repo.spring.io/milestone</url>
